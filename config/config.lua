@@ -99,3 +99,30 @@ Config.PopularSection = {
 -- ░░░╚═╝░░░╚══════╝╚═╝░░╚═╝╚═╝░╚════╝░╚══════╝╚══════╝╚═════╝░
 
 
+Config.VehiculeSection = {
+    {
+        Type = "weapon",                                                            -- Type: vehicule, weapon, item
+        Name = "adder",                                                             -- Nom de spawn
+        LabelName = "Adder",                                                        -- Nom a afficher dans le menu
+        ImageName = "adder.jpg",                                                    -- Nom de l'image, prend en charge (PNG, JPEG, GIF) ⚠️ Dimension ⚠️: 300x169
+        Point = 15000                                                               -- Prix d'achat en coins
+    },{
+        Type = "vehicule",
+        Name = "carbonizzare",
+        LabelName = "Carbonizzare",
+        ImageName = "carbonizzare.jpg",
+        Point = 15000
+    },{
+        Type = "vehicule",
+        Name = "comet2",
+        LabelName = "Comet S2",
+        ImageName = "comet2.jpg",
+        Point = 15000
+    },{
+        Type = "vehicule",
+        Name = "comet6",
+        LabelName = "Comet S6",
+        ImageName = "comet6.jpg",
+        Point = 15000
+    }
+}

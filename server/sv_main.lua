@@ -6,7 +6,7 @@ else
     TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 end
 
-RegisterServerEvent("sBoutique:GetPointsServer")
+--[[ RegisterServerEvent("sBoutique:GetPointsServer")
 AddEventHandler("sBoutique:GetPointsServer", function()
     local xPlayer = ESX.GetPlayerFromId(source)
     if xPlayer ~= nil then
@@ -19,12 +19,16 @@ AddEventHandler("sBoutique:GetPointsServer", function()
             TriggerClientEvent('sBoutique:GetPointsClient', _source, point)
         end)
     end
-end)
+end) ]]
 
 
-ESX.RegisterServerCallback('sBoutique:GetCodeBoutique', function(source, cb)
-    local xPlayer  = ESX.GetPlayerFromId(source)
-    MySQL.Async.fetchAll("SELECT * FROM `users` WHERE `identifier` = '".. xPlayer.getIdentifier() .."'", {}, function (result)
-        cb(result[1].boutique_id)
+RegisterServerEvent("sBoutique:GetPointsAndCode")
+AddEventHandler("sBoutique:GetPointsAndCode", function()
+    local _source = source
+    local xPlayer = ESX.GetPlayerFromId(_source)
+    MySQL.Async.fetchAll('SELECT * FROM users WHERE identifier=@identifier', {
+        ['@identifier'] = xPlayer.getIdentifier()
+    }, function(data)
+        TriggerClientEvent('sBoutique:GetPointsAndCodeClient', _source, data[1].coins, data[1].boutique_id)
     end)
 end)

@@ -202,13 +202,14 @@ body:before {
 
 .side-wrapper {
 	border-bottom: 1px solid var(--border-color);
-	padding: 36px 0;
+	padding: 25px 0;
 	width: 145px;
 }
 
 .side-wrapper+.side-wrapper {
 	border-bottom: none;
 }
+
 
 .wrapper {
 	display: flex;
@@ -435,7 +436,7 @@ body:before {
 
 .Code-Shop-Style {
 	color: rgb(241, 199, 199);
-	margin-top: 50px;
+	margin-top: 30px;
 }
 
 
