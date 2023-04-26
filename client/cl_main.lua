@@ -14,21 +14,49 @@ else
     end)
 end
 
-Citizen.CreateThread(function()
-    ESX.TriggerServerCallback('sBoutique:GetCodeBoutique', function(thecode)
-        Code = thecode
-    end)
+
+RegisterNUICallback('GetPointsAndCode', function(data)
+    TriggerServerEvent('sBoutique:GetPointsAndCode')
 end)
+
+
+
+RegisterNetEvent('sBoutique:GetPointsAndCodeClient')
+AddEventHandler('sBoutique:GetPointsAndCodeClient', function(Coins, Code)
+    SendNUIMessage({
+        PointsAndCode = {
+            ['Coins'] = Coins,
+            ['Code'] = Code
+        }
+    })
+end)
+
+RegisterNetEvent('sBoutique:GiveVehicule')
+AddEventHandler('sBoutique:GiveVehicule', function(Model)
+    GiveVehicule(Model)
+end)
+
+
+
 
 RegisterNUICallback('TestVehicule', function(data)
     Display(false)
     SavePOS = GetEntityCoords(PlayerPedId())
+    print(data.carName)
     SpawnCar(data.carName)
+end)
+
+RegisterNUICallback('BuyItem', function(data)
+    Display(false)
+    TriggerServerEvent('sBoutique:BuyItem', data)
 end)
 
 RegisterNUICallback('exit', function(data)
     Display(false)
 end)
+
+
+
 
 RegisterCommand('OpenBoutique', function()
     Display(true)
@@ -37,52 +65,6 @@ end)
 RegisterKeyMapping('OpenBoutique', 'Boutique', 'keyboard', Config.OpenKey)
 
 --[[ Function ]]
-
-function SpawnCar(car)
-    local car = GetHashKey(car)
-    local Position = Config.TestingVehiculePOS
-    print(json.encode(Position))
-    RequestModel(car)
-    while not HasModelLoaded(car) do
-        RequestModel(car)
-        Citizen.Wait(0)
-    end
-    local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
-    local vehicle = CreateVehicle(car, Position.x, Position.y, Position.z, Position.w, true, false)
-    SetEntityAsMissionEntity(vehicle, true, true)
-    SetPedIntoVehicle(GetPlayerPed(-1), vehicle, -1)
-    SetVehicleDoorsLocked(vehicle, 4)
-    ESX.ShowNotification("Vous avez " .. tostring(Config.TestingVehiculeTimer) .. " secondes pour tester le véhicule.")
-    local timer = Config.TestingVehiculeTimer
-    local breakable = false
-    breakable = false
-    while not breakable do
-        Wait(1000)
-        timer = timer - 1
-        if timer == 15 then
-            ESX.ShowNotification("Il vous reste plus que 15 secondes.")
-        end
-        if timer == 10 then
-            ESX.ShowNotification("Il vous reste plus que 10 secondes.")
-        end
-        if timer == 5 then
-            ESX.ShowNotification("Il vous reste plus que 5 secondes.")
-        end
-        if timer <= 0 then
-            local veh, dist4 = ESX.Game.GetClosestVehicle(playerCoords)
-            DeleteEntity(vehicle)
-            ESX.ShowNotification("~r~Vous avez terminé la période d'essai.")
-            SetEntityCoords(PlayerPedId(), SavePOS)
-            breakable = true
-            break
-        end
-    end
-end
-
-
-
-
-
 
 function Display(Open)
     if Open then
@@ -93,16 +75,15 @@ function Display(Open)
                 Open = true,
                 Data = {
                     ['Playername'] = GetPlayerName(PlayerId()),
-                    ['CodeShop'] = Code,
                     ['ShopInfo'] = {
                         ['ShopName'] = Config.ShopName,
                         ['CoinsName'] = Config.CoinsName,
+                        ['LogoCoins'] = Config.LogoCoins,
                         ['ImageName'] = Config.ImageName,
     
-                        ['HomeNameCat'] = Config.HomeNameCat,
-                        ['VehiculeNameCat'] = Config.VehiculeNameCat,
-                        ['WeaponNameCat'] = Config.WeaponNameCat,
-                        ['MoneyNameCat'] = Config.MoneyNameCat,
+                        ['VehiculeCategory'] = Config.VehiculeCategory,
+                        ['WeaponCategory'] = Config.WeaponCategory,
+                        ['MoneyCategory'] = Config.MoneyCategory,
                         
                     },
                     ['PromoSection'] = {
@@ -113,7 +94,10 @@ function Display(Open)
                         ['PromotionCoinsbBeforeReduction'] = Config.PromotionCoinsbBeforeReduction,
                         ['PromotionCoinsAfterReduction'] = Config.PromotionCoinsAfterReduction
                     },
-                    ['PopularSection'] = Config.PopularSection
+                    ['PopularSection'] = Config.PopularSection,
+                    ['VehiculeSection'] = Config.VehiculeSection,
+                    ['WeaponSection'] = Config.WeaponSection,
+                    ['MoneySection'] = Config.MoneySection,
                 },
             })
         else

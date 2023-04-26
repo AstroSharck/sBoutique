@@ -1,11 +1,16 @@
 let directory = GetParentResourceName()
 InitShop(false);
+var Update = null
 
 window.addEventListener('message', async (event) => {
     if (event.data.Open === true) {
         await InitShop(true, event.data.Data)
     }
     if (event.data.Open === false) { InitShop(false); }
+    if (event.data.PointsAndCode) {
+        $('#Points-Total').text(event.data.PointsAndCode.Coins)
+        $('.Code-Shop-Style').html(`Code Boutique<br>↓<br>${event.data.PointsAndCode.Code}`)
+    }
 });
 
 
@@ -15,6 +20,7 @@ window.addEventListener('message', async (event) => {
 document.onkeyup = function (data) {
     if (data.which == 27) {
         $.post('https://' + directory + '/exit', JSON.stringify({}));
+        clearInterval(Update)
         return;
     };
 };
@@ -33,6 +39,9 @@ document.onkeyup = function (data) {
 $(function () {
     $(".sidebar-link").click(function () {
         $(".sidebar-link").removeClass("is-active");
+        var dataId = $(this).attr("data-id");
+        $(".home-area, .vehicule-area, .weapon-area, .money-area, .history-area").css("display", "none");
+        $("." + dataId).css("display", "block");
         $(this).addClass("is-active");
     });
 });
@@ -50,20 +59,12 @@ $(function () {
     $(".home").on("click", function (e) {
         $(".main-container").removeClass("show");
 
-        $("#home-block").css("display", "block");
-        $(".vehicule-area").css("display", "none");
-        $(".weapon-area").css("display", "none");
-
         $(".main-container").scrollTop(1);
         $(".sidebar-link").removeClass("is-active");
         $(this).addClass("is-active");
     });
     $(".car").on("click", function (e) {
         $(".main-container").addClass("show");
-
-        $("#home-block").css("display", "none");
-        $(".vehicule-area").css("display", "flex");
-        $(".weapon-area").css("display", "none");
 
         $(".main-container").scrollTop(0);
         $(".sidebar-link").removeClass("is-active");
@@ -73,9 +74,13 @@ $(function () {
     $(".weapon").on("click", function (e) {
         $(".main-container").addClass("show");
 
-        $("#home-block").css("display", "none");
-        $(".vehicule-area").css("display", "none");
-        $(".weapon-area").css("display", "flex");
+        $(".main-container").scrollTop(0);
+        $(".sidebar-link").removeClass("is-active");
+        $(this).addClass("is-active");
+    });
+
+    $(".money").on("click", function (e) {
+        $(".main-container").addClass("show");
 
         $(".main-container").scrollTop(0);
         $(".sidebar-link").removeClass("is-active");
@@ -97,38 +102,95 @@ $(function () {
 function InitShop(Open, DataInfo) {
     if (Open) {
         $('.container').show();
+        $.post('https://' + directory + '/GetPointsAndCode', JSON.stringify({}));
         if (DataInfo) {
             $('#Playername').text(DataInfo.Playername)
-            $('.Code-Shop-Style').html(`<div>Code Boutique ➜ ${DataInfo.CodeShop}</div>`)
 
             $('.logo-expand').text(DataInfo.ShopInfo.ShopName)
-            $("#logo-boutique").attr("src", `img/${DataInfo.ShopInfo.ImageName}`)
-            $('#HomeText').text(DataInfo.ShopInfo.HomeNameCat)
-            $('#CarText').text(DataInfo.ShopInfo.VehiculeNameCat)
-            $('#WeaponText').text(DataInfo.ShopInfo.WeaponNameCat)
-            $('#MoneyText').text(DataInfo.ShopInfo.MoneyNameCat)
+            $("#logo-boutique").html(`<img style="width: 100px;" src="${DataInfo.ShopInfo.ImageName}" alt="Logo">`)
+            $('#logo-coins').attr("src", `${DataInfo.ShopInfo.LogoCoins}`)
 
-            $('.main-blog+.main-blog').css('background-image', `url('./img/${DataInfo.PromoSection.PromotionImageName}')`);
+            if (!DataInfo.ShopInfo.VehiculeCategory) $('#CarCategory').css("display", "none")
+            if (!DataInfo.ShopInfo.WeaponCategory) $('#WeaponCategory').css("display", "none")
+            if (!DataInfo.ShopInfo.MoneyCategory) $('#MoneyCategory').css("display", "none")
+
+            $('.main-blog+.main-blog').css('background-image', `url('${DataInfo.PromoSection.PromotionImageName}')`);
             $('.Promote-Text-Card').html(`<div> ${DataInfo.PromoSection.PromotionCoinsbBeforeReduction} <span> ➜ </span> ${DataInfo.PromoSection.PromotionCoinsAfterReduction} </div>`)
-            $('#Promo-Button').html(`${DataInfo.PromoSection.PromotionType === 'vehicule' ? '<button class="button" onclick="TestCar(\'' + DataInfo.PromoSection.PromotionName + '\')">Essayer</button>' : ''}
-            <button class="button">Acheter</button>`)
+            $('#Promo-Button').html(`${DataInfo.PromoSection.PromotionType === 'vehicule' ? '<button class="button" onclick="TestCar(this, \'' + DataInfo.PromoSection.PromotionName + '\')">Essayer</button>' : ''}
+            <button class="button" onclick="BuyByName(this, '${DataInfo.PromoSection.PromotionName}', '${DataInfo.PromoSection.PromotionType}', 'Promotion')">Acheter</button>`)
 
             DataInfo.PopularSection.forEach(element => {
                 $("#popular-section").append(`<div class="video anim" style="--delay: .4s">
         <div class="video-wrapper">
-            <img src="img/${element.ImageName}">
+            <img src="${element.ImageName}">
         </div>
         <center>
             <div class="video-by">${element.LabelName}</div>
             <div class="price-elements">
-                <img class="user-img" src="https://cdn.discordapp.com/attachments/1093850988705763398/1098619930510901269/Astro.gif">
                 <div  class="user-name">${element.Point}</div>
             </div>
         </center>
         <hr style="width: 80%;">
         <center style="padding-bottom: 10px;">
-            ${element.Type === 'vehicule' ? '<button class="button" onclick="TestCar(\'' + element.Name + '\')">Essayer</button>' : ''}
-            <button class="button">Acheter</button>
+            ${element.Type === 'vehicule' ? '<button class="button" onclick="TestCar(this, \'' + element.Name + '\')">Essayer</button>' : ''}
+            <button class="button" onclick="BuyByName(this, '${element.Name}', '${element.Type}', 'Popular')">Acheter</button>
+        </center>
+        </div>`);
+            });
+
+            DataInfo.VehiculeSection.forEach(element => {
+                $("#vehicule-section").append(`<div class="video anim" style="--delay: .2s">
+        <div class="video-wrapper">
+            <img src="${element.ImageName}">
+        </div>
+        <center>
+            <div class="video-by">${element.LabelName}</div>
+            <div class="price-elements">
+                <div  class="user-name">${element.Point}</div>
+            </div>
+        </center>
+        <hr style="width: 80%;">
+        <center style="padding-bottom: 10px;">
+            ${element.Type === 'vehicule' ? '<button class="button" onclick="TestCar(this, \'' + element.Name + '\')">Essayer</button>' : ''}
+            <button class="button" onclick="BuyByName(this, '${element.Name}', '${element.Type}', 'VehiculeSection')">Acheter</button>
+        </center>
+        </div>`);
+            });
+
+            DataInfo.WeaponSection.forEach(element => {
+                $("#weapon-section").append(`<div class="video anim" style="--delay: .2s">
+        <div class="video-wrapper">
+            <img src="${element.ImageName}">
+        </div>
+        <center>
+            <div class="video-by">${element.LabelName}</div>
+            <div class="price-elements">
+                <div  class="user-name">${element.Point}</div>
+            </div>
+        </center>
+        <hr style="width: 80%;">
+        <center style="padding-bottom: 10px;">
+            ${element.Type === 'vehicule' ? '<button class="button" onclick="TestCar(this, \'' + element.Name + '\')">Essayer</button>' : ''}
+            <button class="button" onclick="BuyByName(this, '${element.Name}', '${element.Type}', 'WeaponSection')">Acheter</button>
+        </center>
+        </div>`);
+            });
+
+            DataInfo.MoneySection.forEach(element => {
+                $("#money-section").append(`<div class="video anim" style="--delay: .2s">
+        <div class="video-wrapper">
+            <img src="${element.ImageName}" alt"${element.LabelName}" />
+        </div>
+        <center>
+            <div class="video-by">${element.LabelName}</div>
+            <div class="price-elements">
+                <div  class="user-name">${element.Point}</div>
+            </div>
+        </center>
+        <hr style="width: 80%;">
+        <center style="padding-bottom: 10px;">
+            ${element.Type === 'vehicule' ? '<button class="button" onclick="TestCar(this, \'' + element.Name + '\')">Essayer</button>' : ''}
+            <button class="button" onclick="BuyByName(this, '${element.Name}', '${element.Type}', 'MoneySection')">Acheter</button>
         </center>
         </div>`);
             });
@@ -136,21 +198,52 @@ function InitShop(Open, DataInfo) {
             setTimeout(function () {
                 $(".sidebar").fadeIn('slow');
                 $(".wrapper").fadeIn('slow');
-                $("#loading").fadeOut('slow');
-
-            }, 2000);
+            }, 500);
         }
-
+        Update = setInterval(async () => {
+            await $.post('https://' + directory + '/GetPointsAndCode', JSON.stringify({}));
+        }, 10000);
     } else {
         $('.container').hide();
     }
 }
 
 
+function TestCar(Button, carName) {
+    clearInterval(Update)
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+        button.disabled = true;
+    });
+    Button.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="color: #1396d8;"></i>'
+    setTimeout(() => {
+        $.post('https://' + directory + '/TestVehicule', JSON.stringify({
+            carName: carName
+        }));
+        buttons.forEach(button => {
+            button.disabled = false;
+        });
+        Button.innerHTML = 'Essayer'
+    }, 2000);
+}
 
-
-function TestCar(carName) {
-    $.post('https://' + directory + '/TestVehicule', JSON.stringify({
-        carName: carName
-    }));
+function BuyByName(Button, ItemName, Type, Location) {
+    clearInterval(Update)
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+        button.disabled = true;
+    });
+    Button.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="color: #1396d8;"></i>'
+    setTimeout(() => {
+        $.post('https://' + directory + '/BuyItem', JSON.stringify({
+            ItemName: ItemName,
+            Type: Type,
+            Location: Location
+        }));
+        Button.disabled = true;
+        Button.innerHTML = 'Acheter'
+        buttons.forEach(button => {
+            button.disabled = false;
+        });
+    }, 2000);
 }
