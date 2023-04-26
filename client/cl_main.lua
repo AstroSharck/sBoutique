@@ -15,6 +15,12 @@ else
 end
 
 
+RegisterNUICallback('GetPointsAndCode', function(data)
+    TriggerServerEvent('sBoutique:GetPointsAndCode')
+end)
+
+
+
 RegisterNetEvent('sBoutique:GetPointsAndCodeClient')
 AddEventHandler('sBoutique:GetPointsAndCodeClient', function(Coins, Code)
     SendNUIMessage({
@@ -25,22 +31,32 @@ AddEventHandler('sBoutique:GetPointsAndCodeClient', function(Coins, Code)
     })
 end)
 
-
-RegisterNUICallback('GetPointsAndCode', function(data)
-    TriggerServerEvent('sBoutique:GetPointsAndCode')
+RegisterNetEvent('sBoutique:GiveVehicule')
+AddEventHandler('sBoutique:GiveVehicule', function(Model)
+    GiveVehicule(Model)
 end)
+
 
 
 
 RegisterNUICallback('TestVehicule', function(data)
     Display(false)
     SavePOS = GetEntityCoords(PlayerPedId())
+    print(data.carName)
     SpawnCar(data.carName)
+end)
+
+RegisterNUICallback('BuyItem', function(data)
+    Display(false)
+    TriggerServerEvent('sBoutique:BuyItem', data)
 end)
 
 RegisterNUICallback('exit', function(data)
     Display(false)
 end)
+
+
+
 
 RegisterCommand('OpenBoutique', function()
     Display(true)
@@ -65,10 +81,9 @@ function Display(Open)
                         ['LogoCoins'] = Config.LogoCoins,
                         ['ImageName'] = Config.ImageName,
     
-                        ['HomeNameCat'] = Config.HomeNameCat,
-                        ['VehiculeNameCat'] = Config.VehiculeNameCat,
-                        ['WeaponNameCat'] = Config.WeaponNameCat,
-                        ['MoneyNameCat'] = Config.MoneyNameCat,
+                        ['VehiculeCategory'] = Config.VehiculeCategory,
+                        ['WeaponCategory'] = Config.WeaponCategory,
+                        ['MoneyCategory'] = Config.MoneyCategory,
                         
                     },
                     ['PromoSection'] = {
@@ -79,7 +94,10 @@ function Display(Open)
                         ['PromotionCoinsbBeforeReduction'] = Config.PromotionCoinsbBeforeReduction,
                         ['PromotionCoinsAfterReduction'] = Config.PromotionCoinsAfterReduction
                     },
-                    ['PopularSection'] = Config.PopularSection
+                    ['PopularSection'] = Config.PopularSection,
+                    ['VehiculeSection'] = Config.VehiculeSection,
+                    ['WeaponSection'] = Config.WeaponSection,
+                    ['MoneySection'] = Config.MoneySection,
                 },
             })
         else

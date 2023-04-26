@@ -1,7 +1,22 @@
+ESX = nil
+if Config.EsxNews then
+    ESX = exports["es_extended"]:getSharedObject()
+else
+    Citizen.CreateThread(function()
+        while ESX == nil do
+            TriggerEvent('esx:getSharedObject', function(obj)
+                ESX = obj
+            end)
+            Citizen.Wait(0)
+        end
+    end)
+end
+
+---------------------------------------------------------------------------------------------
+
 function SpawnCar(car)
     local car = GetHashKey(car)
     local Position = Config.TestingVehiculePOS
-    print(json.encode(Position))
     RequestModel(car)
     while not HasModelLoaded(car) do
         RequestModel(car)
@@ -37,4 +52,61 @@ function SpawnCar(car)
             break
         end
     end
+end
+
+---------------------------------------------------------------------------------------------
+
+function GenerateRandomString(length)
+    local charset = {}
+    for i = 48,  57 do table.insert(charset, string.char(i)) end
+    for i = 65,  90 do table.insert(charset, string.char(i)) end
+    for i = 97, 122 do table.insert(charset, string.char(i)) end
+    local str = ""
+    for i = 1, length do
+      str = str .. charset[math.random(1, #charset)]
+    end
+    return str
+end
+
+function GeneratePlate()
+    local generatedPlate
+    local doBreak = false
+    while true do
+        Citizen.Wait(2)
+        math.randomseed(GetGameTimer())
+        generatedPlate = GenerateRandomString(8)
+        ESX.TriggerServerCallback('sBoutique:CheckPlate', function(isPlateTaken)
+            if not isPlateTaken then
+                doBreak = true
+            end
+        end, generatedPlate)
+        if doBreak then
+            break
+        end
+    end
+    return generatedPlate
+end
+
+function GiveVehicule(model)
+    local plyCoords = GetEntityCoords(PlayerPedId(), false)
+    Citizen.Wait(10)
+    ESX.Game.SpawnVehicle(model, vector3(0.0, 0.0, 0.0), 0.0, function(vehicle)
+        local playerCoords = GetEntityCoords(PlayerPedId())
+        local plate = GeneratePlate()
+        local voituregive = {}
+
+        table.insert(voituregive, vehicle)
+        local vehicleProps = ESX.Game.GetVehicleProperties(voituregive[#voituregive])
+        vehicleProps.plate = string.upper(plate)
+        SetVehicleNumberPlateText(voituregive[#voituregive], plate)
+
+        DoScreenFadeOut(1000)
+        Citizen.Wait(1000)
+        SetEntityCoords(vehicle, playerCoords)
+        TaskWarpPedIntoVehicle(PlayerPedId(), vehicle, -1)
+        DoScreenFadeIn(1000)
+
+        TriggerServerEvent('sBoutique:GiveVehicule', vehicleProps, plate)
+
+    end)
 end

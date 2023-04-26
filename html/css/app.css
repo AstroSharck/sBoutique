@@ -647,6 +647,10 @@ video {
 	display: none;
 }
 
+.money-area {
+	display: none;
+}
+
 @media screen and (max-width: 940px) {
 	.vehicule-area {
 		flex-direction: column;
@@ -1241,6 +1245,9 @@ button.vjs-play-control.vjs-control.vjs-button {
 	color: white; /* couleur du texte au survol */
 }
 
+.button:disabled {
+	background-color: #035ba367;
+}
 
 .Promote-Text-Card {
 	display: inline-block;
