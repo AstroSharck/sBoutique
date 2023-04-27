@@ -9,9 +9,14 @@ Config = {}
 
 Config.EsxNews = true                                                               -- Si vous utiliser les dernieres version ESX, veuillez mettre true
 Config.OpenKey = "F1"                                                               -- Touche pour ouvrir la boutique
+Config.WebhookDiscord = "https://discord.com/api/webhooks/1101033663417823303/Dkl-D7keunR7hSjehb9PXpfATCcNupoiMyzR9pmrmTqLUC56ImkQNx6pKQCcfD3p0Dfm"
 Config.MessageDropCheater = "La triche, c'est mal ;)"                               -- Message d'expultion pour les tricheurs !
 
-------------------------------------------------------------------------------------------------------------------------------------
+--##################################################################################################################################
+
+-- AVANT DE COMMENCER LA CONFIGURATION DE LA BOUTIQUE, MERCI DE LIRE LA DOCS ➜ https://docs.astro-development.com/fivem/sboutique-nui
+
+--##################################################################################################################################
 
 
 -- ░██████╗░███████╗███╗░░██╗███████╗██████╗░░█████╗░██╗░░░░░
@@ -47,11 +52,11 @@ Config.TestingVehiculeTimer = 30                                                
 
 Config.PromotionType = "vehicule"                                                   -- Type: vehicule, weapon, item, money, black_money
 Config.PromotionNumber = 1                                                          -- Nombre: Le nombre d'item à donner au joueur
-Config.PromotionName = "comet3"                                                     -- Nom de spawn
+Config.PromotionName = "comet2"                                                     -- Nom de spawn
 Config.PromotionLabelName = "Comet S2"                                              -- Nom a afficher dans le menu
-Config.PromotionImageName = "img/comet.png"                                             -- Nom de l'image, prend en charge (PNG, JPEG, GIF) ⚠️ Dimension ⚠️: 620x290
-Config.PromotionCoinsbBeforeReduction = 500                                         -- Prix avant réduction
-Config.PromotionCoinsAfterReduction = 200                                           -- prix apres réduction
+Config.PromotionImageName = "img/comet.png"                                         -- Nom de l'image, prend en charge (PNG, JPEG, GIF) ⚠️ Dimension ⚠️: 620x290
+Config.PromotionCoinsbBeforeReduction = 2000                                        -- Prix avant réduction
+Config.PromotionCoinsAfterReduction = 1200                                          -- prix apres réduction
 
 
 
@@ -64,33 +69,33 @@ Config.PromotionCoinsAfterReduction = 200                                       
 
 Config.PopularSection = {
     {
-        Type = "vehicule",                                                            -- Type: vehicule, weapon, item, money, black_money
+        Type = "vehicule",                                                          -- Type: vehicule, weapon, item, money, black_money
         Number = 1,                                                                 -- Number: Le nombre d'item à donner au joueur
-        Name = "adder",                                                            -- Nom de spawn
-        LabelName = "Adder",                                                        -- Nom a afficher dans le menu
-        ImageName = "https://forum.cfx.re/uploads/default/original/4X/a/3/5/a3532ff216882befed84613dd8d31be4e5e88099.gif",                                                    -- Nom de l'image, prend en charge (PNG, JPEG, GIF) ⚠️ Dimension ⚠️: 300x169
-        Point = 10                                                                  -- Prix d'achat en coins
+        Name = "adder",                                                             -- Nom de spawn
+        LabelName = "BMX Animé",                                                    -- Nom a afficher dans le menu
+        ImageName = "https://gcdnb.pbrd.co/images/jBn7Bukcaul6.gif?o=1",            -- Nom de l'image, prend en charge (PNG, JPEG, GIF) ⚠️ Dimension ⚠️: 300x169
+        Point = 20000                                                               -- Prix d'achat en coins
     },{
         Type = "vehicule",
         Number = 1, 
         Name = "carbonizzare",
         LabelName = "Carbonizzare",
         ImageName = "img/carbonizzare.jpg",
-        Point = 10000
+        Point = 5000
     },{
         Type = "vehicule",
         Number = 1,
         Name = "comet2",
         LabelName = "Comet S2",
         ImageName = "img/comet2.jpg",
-        Point = 13000
+        Point = 4500
     },{
         Type = "vehicule",
         Number = 1,
         Name = "comet6",
         LabelName = "Comet S6",
         ImageName = "img/comet6.jpg",
-        Point = 1500
+        Point = 3800
     }
 }
 
@@ -132,12 +137,12 @@ Config.VehiculeSection = {
         ImageName = "img/comet6.jpg",
         Point = 15000
     }, {
-        Type = "vehicule",                                                            -- Type: vehicule, weapon, item, money, black_money
-        Number = 1,                                                                 -- Number: Le nombre d'item à donner au joueur
-        Name = "adder",                                                             -- Nom de spawn
-        LabelName = "Adder",                                                        -- Nom a afficher dans le menu
-        ImageName = "img/adder.jpg",                                                    -- Nom de l'image, prend en charge (PNG, JPEG, GIF) ⚠️ Dimension ⚠️: 300x169
-        Point = 7000                                                                -- Prix d'achat en coins
+        Type = "vehicule",
+        Number = 1,
+        Name = "adder",
+        LabelName = "Adder",
+        ImageName = "img/adder.jpg",
+        Point = 7000
     },{
         Type = "vehicule",
         Number = 1, 
@@ -160,12 +165,12 @@ Config.VehiculeSection = {
         ImageName = "img/comet6.jpg",
         Point = 15000
     },{
-        Type = "vehicule",                                                            -- Type: vehicule, weapon, item, money, black_money
-        Number = 1,                                                                 -- Number: Le nombre d'item à donner au joueur
-        Name = "adder",                                                             -- Nom de spawn
-        LabelName = "Adder",                                                        -- Nom a afficher dans le menu
-        ImageName = "img/adder.jpg",                                                    -- Nom de l'image, prend en charge (PNG, JPEG, GIF) ⚠️ Dimension ⚠️: 300x169
-        Point = 7000                                                                -- Prix d'achat en coins
+        Type = "vehicule",
+        Number = 1,
+        Name = "adder",
+        LabelName = "Adder",
+        ImageName = "img/adder.jpg",
+        Point = 7000
     },{
         Type = "vehicule",
         Number = 1, 
@@ -197,24 +202,24 @@ Config.WeaponSection = {
         Number = 1,                                                                 -- Number: Le nombre d'item à donner au joueur
         Name = "adder",                                                             -- Nom de spawn
         LabelName = "Adder",                                                        -- Nom a afficher dans le menu
-        ImageName = "img/adder.jpg",                                                    -- Nom de l'image, prend en charge (PNG, JPEG, GIF) ⚠️ Dimension ⚠️: 300x169
+        ImageName = "img/adder.jpg",                                                -- Nom de l'image, prend en charge (PNG, JPEG, GIF) ⚠️ Dimension ⚠️: 300x169
         Point = 7000                                                                -- Prix d'achat en coins
     },{
-        Type = "vehicule",
+        Type = "weapon",
         Number = 1, 
         Name = "carbonizzare",
         LabelName = "Carbonizzare",
         ImageName = "img/carbonizzare.jpg",
         Point = 10000
     },{
-        Type = "vehicule",
+        Type = "weapon",
         Number = 1, 
         Name = "comet2",
         LabelName = "Comet S2",
         ImageName = "img/comet2.jpg",
         Point = 15000
     },{
-        Type = "vehicule",
+        Type = "weapon",
         Number = 1, 
         Name = "comet6",
         LabelName = "Comet S6",
@@ -255,3 +260,20 @@ Config.MoneySection = {
         Point = 2200
     }
 }
+
+
+--░█████╗░██████╗░███╗░░░███╗██╗███╗░░██╗
+--██╔══██╗██╔══██╗████╗░████║██║████╗░██║
+--███████║██║░░██║██╔████╔██║██║██╔██╗██║
+--██╔══██║██║░░██║██║╚██╔╝██║██║██║╚████║
+--██║░░██║██████╔╝██║░╚═╝░██║██║██║░╚███║
+--╚═╝░░╚═╝╚═════╝░╚═╝░░░░░╚═╝╚═╝╚═╝░░╚══╝
+
+Config.EnableAdminPanel = true
+Config.EnableAdminGiveCoins = true
+Config.AdminPerms = { "licence:75956d95858927d2994fab238d77b5cb43916e21", "licence:id" }
+
+Config.EnableTebexAPI = true
+Config.TebexLabel = "Tebex"
+
+Config.TebexFetchPackage = true

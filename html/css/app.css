@@ -39,6 +39,7 @@ body {
 	width: 100%;
 	height: 100vh;
 	overflow: hidden;
+	user-select: none;
 }
 
 body:before {
@@ -557,10 +558,13 @@ body:before {
 	position: relative;
 	background-color: var(--video-bg);
 	border-radius: 20px;
+	transition: all 0.2s ease-out;
 	overflow: hidden;
-	transition: 0.1s;
 }
 
+.video:hover {
+	transform: scale(1.2);
+}
 
 .video-wrapper {
 	position: relative;
@@ -611,12 +615,6 @@ body:before {
 	right: 8px;
 }
 
-.video:hover {
-	cursor: pointer;
-	transform: scale(1.6);
-	transform-origin: center;
-}
-
 .video-author {
 	position: absolute;
 	right: 10px;
@@ -648,6 +646,10 @@ video {
 }
 
 .money-area {
+	display: none;
+}
+
+.history-area {
 	display: none;
 }
 
@@ -1226,23 +1228,37 @@ button.vjs-play-control.vjs-control.vjs-button {
 
 
 .button {
-	background-color: #035ba3; /* couleur de fond */
-	border: none; /* suppression des bordures */
-	color: white; /* couleur du texte */
-	padding: 7px 12px; /* taille du padding */
-	text-align: center; /* centrage du texte */
-	text-decoration: none; /* suppression des soulignements */
-	display: inline-block; /* affichage en ligne */
-	font-size: 16px; /* taille de police */
-	margin: 4px 2px; /* marges */
-	cursor: pointer; /* changement de curseur au survol */
-	border-radius: 4px; /* arrondi des coins */
-	transition-duration: 0.4s; /* durée de la transition */
+	background-color: #035ba3;
+	/* couleur de fond */
+	border: none;
+	/* suppression des bordures */
+	color: white;
+	/* couleur du texte */
+	padding: 7px 12px;
+	/* taille du padding */
+	text-align: center;
+	/* centrage du texte */
+	text-decoration: none;
+	/* suppression des soulignements */
+	display: inline-block;
+	/* affichage en ligne */
+	font-size: 16px;
+	/* taille de police */
+	margin: 4px 2px;
+	/* marges */
+	cursor: pointer;
+	/* changement de curseur au survol */
+	border-radius: 4px;
+	/* arrondi des coins */
+	transition-duration: 0.4s;
+	/* durée de la transition */
 }
-  
+
 .button:hover {
-	background-color: #014780; /* couleur de fond au survol */
-	color: white; /* couleur du texte au survol */
+	background-color: #014780;
+	/* couleur de fond au survol */
+	color: white;
+	/* couleur du texte au survol */
 }
 
 .button:disabled {
@@ -1258,7 +1274,7 @@ button.vjs-play-control.vjs-control.vjs-button {
 	font-size: 150%;
 	margin: 110px 10px 10px 10px;
 }
-  
+
 
 
 
@@ -1273,12 +1289,31 @@ button.vjs-play-control.vjs-control.vjs-button {
 
 @keyframes zoom-infinite {
 	0% {
-	  transform: scale(1);
+		transform: scale(1);
 	}
+
 	50% {
-	  transform: scale(1.5);
+		transform: scale(1.5);
 	}
+
 	100% {
-	  transform: scale(1);
+		transform: scale(1);
 	}
-  }
+}
+
+
+
+.center-elements-popular {
+	position: absolute;
+    top: 75%;
+    left: 55%;
+    transform: translate(-50%, -50%);
+}
+
+
+.center-elements {
+	position: absolute;
+    top: 50%;
+    left: 55%;
+    transform: translate(-50%, -50%);
+}

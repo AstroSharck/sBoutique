@@ -15,18 +15,22 @@ else
 end
 
 
-RegisterNUICallback('GetPointsAndCode', function(data)
-    TriggerServerEvent('sBoutique:GetPointsAndCode')
-end)
-
-
-
 RegisterNetEvent('sBoutique:GetPointsAndCodeClient')
 AddEventHandler('sBoutique:GetPointsAndCodeClient', function(Coins, Code)
     SendNUIMessage({
         PointsAndCode = {
             ['Coins'] = Coins,
             ['Code'] = Code
+        }
+    })
+end)
+
+RegisterNetEvent('sBoutique:GetHistoryClient')
+AddEventHandler('sBoutique:GetHistoryClient', function(Data, Logo)
+    SendNUIMessage({
+        History = {
+            ['Data'] = Data,
+            ['LogoCoins'] = Logo
         }
     })
 end)
@@ -38,6 +42,17 @@ end)
 
 
 
+RegisterNUICallback('GetPointsAndCode', function(data)
+    TriggerServerEvent('sBoutique:GetPointsAndCode')
+end)
+
+RegisterNUICallback('GetHistory', function(data)
+    TriggerServerEvent('sBoutique:GetHistory')
+end)
+
+RegisterNUICallback('GetAdminDetails', function(data)
+    TriggerServerEvent('sBoutique:GetAdminDetails')
+end)
 
 RegisterNUICallback('TestVehicule', function(data)
     Display(false)
