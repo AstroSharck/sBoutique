@@ -1,3 +1,4 @@
+local date = os.date("*t")
 ESX = nil
 
 if Config.EsxNews then
@@ -6,6 +7,10 @@ else
     TriggerEvent('esx:getSharedObject', function(obj)
         ESX = obj
     end)
+end
+
+if ('sBoutique' ~= GetCurrentResourceName()) then
+    return error("Don\'t rename resource")
 end
 
 --[[ Get Code and Points ]]
@@ -20,12 +25,24 @@ AddEventHandler("sBoutique:GetPointsAndCode", function()
     end)
 end)
 
+
+RegisterServerEvent("sBoutique:GetHistory")
+AddEventHandler("sBoutique:GetHistory", function()
+    local _source = source
+    local xPlayer = ESX.GetPlayerFromId(source)
+    MySQL.Async.fetchAll('SELECT * FROM shop_history WHERE identifier=@identifier', {
+        ['@identifier'] = xPlayer.getIdentifier()
+    }, function(data)
+        TriggerClientEvent('sBoutique:GetHistoryClient', _source, data, Config.LogoCoins)
+    end)
+end)
+
+
 --[[ Buy item ]]
 RegisterServerEvent("sBoutique:BuyItem")
 AddEventHandler("sBoutique:BuyItem", function(data)
     local _source = source
     local xPlayer = ESX.GetPlayerFromId(source)
-    print(data.ItemName)
     local GetPriceItem = GetItemPrice(data.ItemName, data.Location)
     if GetPriceItem == nil then
         return --[[ DropPlayer(_source, Config.MessageDropCheater) ]] print('Cheat !')
@@ -36,28 +53,31 @@ AddEventHandler("sBoutique:BuyItem", function(data)
             }, function(data)
                 local Coins = data[1].coins
                 if Coins >= GetPriceItem.Price then
-                    MySQL.Async.fetchAll('SELECT * FROM users WHERE identifier=@identifier', {
-                        ['@identifier'] = xPlayer.getIdentifier()
-                    }, function(data)
-                        local poi = data[1].coins
-                        npoint = poi - GetPriceItem.Price
-                        MySQL.Async.execute('UPDATE `users` SET `coins`=@point  WHERE identifier=@identifier', {
-                            ['@identifier'] = xPlayer.getIdentifier(),
-                            ['@point'] = npoint
-                        }, function(rowsChange)
-                            if GetPriceItem.Type == "vehicule" then
-                                TriggerClientEvent('sBoutique:GiveVehicule', _source, GetPriceItem.Name)
-                            elseif GetPriceItem.Type == "weapon" then
-                                xPlayer.addWeapon(GetPriceItem.Name, GetPriceItem.Number)
-                                TriggerClientEvent('esx:showAdvancedNotification', _source, Config.ShopName, '', 'Merci pour ton achat !\nTu a recu: '..GetPriceItem.Label, "CHAR_BANK_FLEECA", 3)
-                            elseif GetPriceItem.Type == "item" then
-                                xPlayer.addInventoryItem(GetPriceItem.Name, GetPriceItem.Number)
-                                TriggerClientEvent('esx:showAdvancedNotification', _source, Config.ShopName, '', 'Merci pour ton achat !\nTu a recu: '..GetPriceItem.Label, "CHAR_BANK_FLEECA", 3)
-                            elseif GetPriceItem.Type == "money" then
-                                xPlayer.addAccountMoney('bank', GetPriceItem.Number)
-                                TriggerClientEvent('esx:showAdvancedNotification', _source, Config.ShopName, '', 'Merci pour ton achat !\nTu a recu: '..GetPriceItem.Label, "CHAR_BANK_FLEECA", 3)
-                            end
-                        end)
+                    npoint = Coins - GetPriceItem.Price
+                    MySQL.Async.execute('UPDATE `users` SET `coins`=@point  WHERE identifier=@identifier', {
+                        ['@identifier'] = xPlayer.getIdentifier(),
+                        ['@point'] = npoint
+                    }, function(rowsChange)
+                        if GetPriceItem.Type == "vehicule" then
+                            TriggerClientEvent('sBoutique:GiveVehicule', _source, GetPriceItem.Name)
+                            InsertHistory(xPlayer.getIdentifier(), GetPriceItem.Label, GetPriceItem.Price, DisplayDate())
+                            SendWebHook('sBoutique', 26551, xPlayer.getName()..' a effectué un achat dans la boutique.\n\nArticle: **'..GetPriceItem.Label..'**\n'..'Prix: **'..GetPriceItem.Price..'**')
+                        elseif GetPriceItem.Type == "weapon" then
+                            xPlayer.addWeapon(GetPriceItem.Name, GetPriceItem.Number)
+                            InsertHistory(xPlayer.getIdentifier(), GetPriceItem.Label, GetPriceItem.Price, DisplayDate())
+                            SendWebHook('sBoutique', 26551, xPlayer.getName()..' a effectué un achat dans la boutique.\n\nArticle: **'..GetPriceItem.Label..'**\n'..'Prix: **'..GetPriceItem.Price..'**')
+                            TriggerClientEvent('esx:showAdvancedNotification', _source, Config.ShopName, '', 'Merci pour ton achat !\nTu a recu: '..GetPriceItem.Label, "CHAR_BANK_FLEECA", 3)
+                        elseif GetPriceItem.Type == "item" then
+                            xPlayer.addInventoryItem(GetPriceItem.Name, GetPriceItem.Number)
+                            InsertHistory(xPlayer.getIdentifier(), GetPriceItem.Label, GetPriceItem.Price, DisplayDate())
+                            SendWebHook('sBoutique', 26551, xPlayer.getName()..' a effectué un achat dans la boutique.\n\nArticle: **'..GetPriceItem.Label..'**\n'..'Prix: **'..GetPriceItem.Price..'**')
+                            TriggerClientEvent('esx:showAdvancedNotification', _source, Config.ShopName, '', 'Merci pour ton achat !\nTu a recu: '..GetPriceItem.Label, "CHAR_BANK_FLEECA", 3)
+                        elseif GetPriceItem.Type == "money" then
+                            xPlayer.addAccountMoney('bank', GetPriceItem.Number)
+                            InsertHistory(xPlayer.getIdentifier(), GetPriceItem.Label, GetPriceItem.Price, DisplayDate())
+                            SendWebHook('sBoutique', 26551, xPlayer.getName()..' a effectué un achat dans la boutique.\n\nArticle: **'..GetPriceItem.Label..'**\n'..'Prix: **'..GetPriceItem.Price..'**')
+                            TriggerClientEvent('esx:showAdvancedNotification', _source, Config.ShopName, '', 'Merci pour ton achat !\nTu a recu: '..GetPriceItem.Label, "CHAR_BANK_FLEECA", 3)
+                        end
                     end)
                 else
                     TriggerClientEvent('esx:showAdvancedNotification', _source, Config.ShopName, '', 'Tu n\'as pas assez de ' .. Config.CoinsName .. ' pour effectuer cette achat !', "CHAR_BANK_FLEECA", 3)
@@ -93,70 +113,30 @@ ESX.RegisterServerCallback('sBoutique:CheckPlate', function (source, cb, plate)
 end)
 
 
-function GetItemPrice(name, type)
-    if type == "Promotion" then
-        if Config.PromotionName == name then
-            return {
-                Type = Config.PromotionType,
-                Name = Config.PromotionName,
-                Label = Config.PromotionLabelName,
-                Price = Config.PromotionCoinsAfterReduction,
-                Number = Config.PromotionNumber
-            }
-        end
+RegisterServerEvent('sBoutique:GetAdminDetails')
+AddEventHandler('sBoutique:GetAdminDetails', function()
+    local _source = source
+    local xPlayer = ESX.GetPlayerFromId(source)
+    local IsAdmin = CheckAdmin('licence:'..xPlayer.getIdentifier())
+
+    local FetchPayementTebex = GetPayementTebex()
+    local FetchPackageTebex = GetPackageTebex()
+
+    local Data = {
+        ['EnableAdminPanel'] = Config.EnableAdminPanel,
+    }
+
+    Data.EnableAdminPanel = Config.EnableAdminPanel
+    Data.EnableTebexAPI = Config.EnableTebexAPI
+    Data.EnableTebexRevenue = Config.EnableTebexRevenue
+    local TebexRev = Config.EnableTebexRevenue
+    local TebexPack = Config.TebexFetchPackage
+    
+    if not Config.EnableAdminPanel then return end
+    if IsAdmin then
+        if not Config.EnableAdminGiveCoins then Data.EnableAdminGiveCoins = false end
     end
-    if type == "Popular" then
-        for i, Popular in ipairs(Config.PopularSection) do
-            if Popular.Name == name then
-                return {
-                    Type = Popular.Type,
-                    Name = Popular.Name,
-                    Label = Popular.LabelName,
-                    Price = Popular.Point,
-                    Number = Popular.Number
-                }
-            end
-        end
-    end
-    if type == "VehiculeSection" then
-        for i, vehicle in ipairs(Config.VehiculeSection) do
-            if vehicle.Name == name then
-                return {
-                    Type = vehicle.Type,
-                    Name = vehicle.Name,
-                    Label = vehicle.LabelName,
-                    Price = vehicle.Point,
-                    Number = vehicle.Number
-                }
-            end
-        end
-    end
-    if type == "WeaponSection" then
-        for i, vehicle in ipairs(Config.WeaponSection) do
-            if vehicle.Name == name then
-                return {
-                    Type = vehicle.Type,
-                    Name = vehicle.Name,
-                    Label = vehicle.LabelName,
-                    Price = vehicle.Point,
-                    Number = vehicle.Number
-                }
-            end
-        end
-    end
-    if type == "MoneySection" then
-        for i, vehicle in ipairs(Config.MoneySection) do
-            if vehicle.Name == name then
-                return {
-                    Type = vehicle.Type,
-                    Name = vehicle.Name,
-                    Label = vehicle.LabelName,
-                    Price = vehicle.Point,
-                    Number = vehicle.Number
-                }
-            end
-        end
-    end
-    return nil
-end
+end)
+
+
 
