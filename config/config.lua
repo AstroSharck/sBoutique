@@ -8,6 +8,7 @@ Config = {}
 -- ╚═════╝░░╚════╝░░╚═════╝░░░░╚═╝░░░╚═╝░░░╚═╝░░░░╚═════╝░╚══════╝
 
 Config.EsxNews = true                                                               -- Si vous utiliser les dernieres version ESX, veuillez mettre true
+Config.Language = 'fr'                                                              -- Prend en charge (fr, en, es, de, zh) mais vous pouvez ajouter votre langue
 Config.OpenKey = "F1"                                                               -- Touche pour ouvrir la boutique
 Config.WebhookDiscord = "https://discord.com/api/webhooks/1101033663417823303/Dkl-D7keunR7hSjehb9PXpfATCcNupoiMyzR9pmrmTqLUC56ImkQNx6pKQCcfD3p0Dfm"
 Config.MessageDropCheater = "La triche, c'est mal ;)"                               -- Message d'expultion pour les tricheurs !
@@ -32,9 +33,10 @@ Config.CoinsName = "AstroCoins"                                                 
 Config.LogoCoins = "https://cdn-icons-png.flaticon.com/512/1369/1369860.png"        -- Logo de la money
 Config.ImageName = "https://i.postimg.cc/DywwGz04/astro.gif"                        -- Nom de l'image (Prend en charge: PNG, JPEG, GIF) ⚠️ Dimension ⚠️: 500x500
 
-Config.VehiculeCategory  = true                                                     -- Nom de la page Voiture
-Config.WeaponCategory = true                                                        -- Nom de la page Arme
-Config.MoneyCategory = true                                                         -- Nom de la page Argent
+Config.VehiculeCategory  = true                                                     -- Afficher au non la catégorie Vehicule
+Config.WeaponCategory = true                                                        -- Afficher au non la catégorie Arme
+Config.MoneyCategory = true                                                         -- Afficher au non la catégorie Argent
+Config.TebexCategory = true                                                         -- Afficher au non la catégorie Tebex
 
 Config.TestingVehiculePOS = vector4(-899.62, -3298.74, 13.94, 58.0)                 -- Position d'apparation pour tester une voiture
 Config.TestingVehiculeTimer = 30                                                    -- Temps pour tester la voiture
@@ -270,10 +272,5 @@ Config.MoneySection = {
 --╚═╝░░╚═╝╚═════╝░╚═╝░░░░░╚═╝╚═╝╚═╝░░╚══╝
 
 Config.EnableAdminPanel = true
-Config.EnableAdminGiveCoins = true
 Config.AdminPerms = { "licence:75956d95858927d2994fab238d77b5cb43916e21", "licence:id" }
-
 Config.EnableTebexAPI = true
-Config.TebexLabel = "Tebex"
-
-Config.TebexFetchPackage = true
