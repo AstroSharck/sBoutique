@@ -110,3 +110,13 @@ function GiveVehicule(model)
 
     end)
 end
+
+
+function Translate(key)
+    local translation = translations[Config.Language][key]
+    if not translation then
+       -- si la traduction n'existe pas pour la langue donnée, renvoyer la clé elle-même
+       return key
+    end
+    return translation
+ end

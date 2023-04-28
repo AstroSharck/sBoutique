@@ -95,7 +95,7 @@ end
 
 function DisplayDate()
     local date = os.date("*t")
-    local formattedDate = string.format("%02d/%02d/%d à %02d:%02d", date.day, date.month, date.year, date.hour, date.min)
+    local formattedDate = string.format("%02d/%02d/%d | %02d:%02d", date.day, date.month, date.year, date.hour, date.min)
     return formattedDate
 end
 
@@ -109,40 +109,52 @@ function CheckAdmin(Identifier)
     end
 end
 
-
-
-function GetPayementTebex()
-    if Config.EnableTebexAPI then
-        local TebexKey = GetConvar("sv_tebexSecret", nil)
-        PerformHttpRequest('https://plugin.tebex.io/payments', function(statusCode, responseBody, headers)
-            if statusCode == 200 then
-                return responseBody
-            else
-                return error('TebexKey is not valid')
-            end
-        end, 'GET', '', {
-            ['X-Tebex-Secret'] = TebexKey
-        })
-    end
-    return nil
-end
-
-function GetPackageTebex()
-    if Config.EnableTebexAPI then
-        if Config.TebexFetchPackage then
-            local TebexKey = GetConvar("sv_tebexSecret", nil)
-            PerformHttpRequest('https://plugin.tebex.io/packages', function(statusCode, responseBody, headers)
-                if statusCode == 200 then
-                    return responseBody
-                else
-                    return error('TebexKey is not valid')
-                end
-            end, 'GET', '', {
-                ['X-Tebex-Secret'] = TebexKey
-            })
+function GetInformationTebex(callback)
+    local TebexKey = GetConvar("sv_tebexSecret", nil)
+    PerformHttpRequest('https://plugin.tebex.io/information', function(statusCode, responseBody, headers)
+        if statusCode == 200 then
+            local decode = json.decode(responseBody)
+            callback(decode)
+        else
+            callback(nil)
         end
-        return nil
-    end
-    return nil
+    end, 'GET', '', {
+        ['X-Tebex-Secret'] = TebexKey
+    })
 end
 
+function GetPayementTebex(callback)
+    local TebexKey = GetConvar("sv_tebexSecret", nil)
+    PerformHttpRequest('https://plugin.tebex.io/payments', function(statusCode, responseBody, headers)
+        if statusCode == 200 then
+            local decode = json.decode(responseBody)
+            callback(decode)
+        else
+            callback(nil)
+        end
+    end, 'GET', '', {
+        ['X-Tebex-Secret'] = TebexKey
+    })
+end
+
+function GetPackageTebex(callback)
+    local TebexKey = GetConvar("sv_tebexSecret", nil)
+    PerformHttpRequest('https://plugin.tebex.io/packages', function(statusCode, responseBody, headers)
+        if statusCode == 200 then
+            local decode = json.decode(responseBody)
+            callback(decode)
+        else
+            callback(nil)
+        end
+    end, 'GET', '', {
+        ['X-Tebex-Secret'] = TebexKey
+    })
+end
+
+function Translate(key)
+    local translation = translations[Config.Language][key]
+    if not translation then
+       return key
+    end
+    return translation
+ end

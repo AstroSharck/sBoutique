@@ -20,7 +20,8 @@ AddEventHandler('sBoutique:GetPointsAndCodeClient', function(Coins, Code)
     SendNUIMessage({
         PointsAndCode = {
             ['Coins'] = Coins,
-            ['Code'] = Code
+            ['Code'] = Code,
+            ['your_code'] = Translate('your_code'),
         }
     })
 end)
@@ -40,6 +41,27 @@ AddEventHandler('sBoutique:GiveVehicule', function(Model)
     GiveVehicule(Model)
 end)
 
+RegisterNetEvent('sBoutique:GetAdminDetailsClient')
+AddEventHandler('sBoutique:GetAdminDetailsClient', function(Details)
+    
+end)
+
+RegisterNetEvent('sBoutique:GetPackageDetailsClient')
+AddEventHandler('sBoutique:GetPackageDetailsClient', function(Info, Package)
+    SendNUIMessage({
+        InfoDetails = {
+            ['Data'] = Info,
+        },
+        PackageDetails = {
+            ['Data'] = Package,
+            ['Translate'] = {
+                ['Devise'] = Translate('buy_package_signe'),
+                ['Buy'] = Translate('paid_button'),
+            }
+        }
+    })
+end)
+
 
 
 RegisterNUICallback('GetPointsAndCode', function(data)
@@ -48,6 +70,10 @@ end)
 
 RegisterNUICallback('GetHistory', function(data)
     TriggerServerEvent('sBoutique:GetHistory')
+end)
+
+RegisterNUICallback('GetPackageDetails', function(data)
+    TriggerServerEvent('sBoutique:GetPackageDetails')
 end)
 
 RegisterNUICallback('GetAdminDetails', function(data)
@@ -99,7 +125,7 @@ function Display(Open)
                         ['VehiculeCategory'] = Config.VehiculeCategory,
                         ['WeaponCategory'] = Config.WeaponCategory,
                         ['MoneyCategory'] = Config.MoneyCategory,
-                        
+                        ['TebexCategory'] = Config.TebexCategory
                     },
                     ['PromoSection'] = {
                         ['PromotionType'] = Config.PromotionType,
@@ -113,6 +139,29 @@ function Display(Open)
                     ['VehiculeSection'] = Config.VehiculeSection,
                     ['WeaponSection'] = Config.WeaponSection,
                     ['MoneySection'] = Config.MoneySection,
+                    ['Translate'] = {
+                        your_balance = Translate('your_balance'),
+                        tebex_message = Translate('tebex_message'),
+                        special_offer = Translate('special_offer'),
+                        popular = Translate('popular'),
+                        try_button = Translate('try_button'),
+                        paid_button = Translate('paid_button'),
+                        add_reniew = Translate('add_reniew'),
+
+                        main_menu_title = Translate('main_menu_title'),
+                        home_menu = Translate('home_menu'),
+                        vehicle_menu = Translate('vehicle_menu'),
+                        weapon_menu = Translate('weapon_menu'),
+                        money_menu = Translate('money_menu'),
+                        history_menu = Translate('history_menu'),
+
+                        sub_menu_title = Translate('sub_menu_title'),
+                        tebex_menu = Translate('tebex_menu'),
+                        reviews_menu = Translate('reviews_menu'),
+                        admin_menu = Translate('admin_menu'),
+
+                        no_data = Translate('no_data'),
+                    }
                 },
             })
         else

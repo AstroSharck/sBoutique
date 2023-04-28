@@ -113,29 +113,38 @@ ESX.RegisterServerCallback('sBoutique:CheckPlate', function (source, cb, plate)
 end)
 
 
+RegisterServerEvent('sBoutique:GetPackageDetails')
+AddEventHandler('sBoutique:GetPackageDetails', function()
+    local _source = source
+    local xPlayer = ESX.GetPlayerFromId(source)
+    local IsAdmin = CheckAdmin('licence:'..xPlayer.getIdentifier())
+
+    if not Config.EnableAdminPanel then return end
+
+    if Config.EnableTebexAPI then
+        local Data = {}
+        local FetchInformationTebex = GetInformationTebex(function(response)
+            local FetchPackageTebex = GetPackageTebex(function(response2)
+                TriggerClientEvent('sBoutique:GetPackageDetailsClient', _source, response, response2)
+                return
+            end)
+        end)
+    end
+end)
+
+
+
+
+
+
 RegisterServerEvent('sBoutique:GetAdminDetails')
 AddEventHandler('sBoutique:GetAdminDetails', function()
     local _source = source
     local xPlayer = ESX.GetPlayerFromId(source)
     local IsAdmin = CheckAdmin('licence:'..xPlayer.getIdentifier())
+    if not IsAdmin then return end
 
-    local FetchPayementTebex = GetPayementTebex()
-    local FetchPackageTebex = GetPackageTebex()
-
-    local Data = {
-        ['EnableAdminPanel'] = Config.EnableAdminPanel,
-    }
-
-    Data.EnableAdminPanel = Config.EnableAdminPanel
-    Data.EnableTebexAPI = Config.EnableTebexAPI
-    Data.EnableTebexRevenue = Config.EnableTebexRevenue
-    local TebexRev = Config.EnableTebexRevenue
-    local TebexPack = Config.TebexFetchPackage
     
-    if not Config.EnableAdminPanel then return end
-    if IsAdmin then
-        if not Config.EnableAdminGiveCoins then Data.EnableAdminGiveCoins = false end
-    end
 end)
 
 
