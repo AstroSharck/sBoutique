@@ -37,6 +37,15 @@ AddEventHandler("sBoutique:GetHistory", function()
     end)
 end)
 
+RegisterServerEvent("sBoutique:GetReviews")
+AddEventHandler("sBoutique:GetReviews", function()
+    local _source = source
+    local xPlayer = ESX.GetPlayerFromId(source)
+    MySQL.Async.fetchAll('SELECT * FROM shop_reviews', {}, function(data)
+        TriggerClientEvent('sBoutique:GetReviewsClient', _source, data)
+    end)
+end)
+
 
 --[[ Buy item ]]
 RegisterServerEvent("sBoutique:BuyItem")
@@ -62,25 +71,26 @@ AddEventHandler("sBoutique:BuyItem", function(data)
                             TriggerClientEvent('sBoutique:GiveVehicule', _source, GetPriceItem.Name)
                             InsertHistory(xPlayer.getIdentifier(), GetPriceItem.Label, GetPriceItem.Price, DisplayDate())
                             SendWebHook('sBoutique', 26551, xPlayer.getName()..' a effectué un achat dans la boutique.\n\nArticle: **'..GetPriceItem.Label..'**\n'..'Prix: **'..GetPriceItem.Price..'**')
+                            TriggerClientEvent('sBoutique:BuyMessage', _source, GetPriceItem.Label)
                         elseif GetPriceItem.Type == "weapon" then
                             xPlayer.addWeapon(GetPriceItem.Name, GetPriceItem.Number)
                             InsertHistory(xPlayer.getIdentifier(), GetPriceItem.Label, GetPriceItem.Price, DisplayDate())
                             SendWebHook('sBoutique', 26551, xPlayer.getName()..' a effectué un achat dans la boutique.\n\nArticle: **'..GetPriceItem.Label..'**\n'..'Prix: **'..GetPriceItem.Price..'**')
-                            TriggerClientEvent('esx:showAdvancedNotification', _source, Config.ShopName, '', 'Merci pour ton achat !\nTu a recu: '..GetPriceItem.Label, "CHAR_BANK_FLEECA", 3)
+                            TriggerClientEvent('sBoutique:BuyMessage', _source, GetPriceItem.Label)
                         elseif GetPriceItem.Type == "item" then
                             xPlayer.addInventoryItem(GetPriceItem.Name, GetPriceItem.Number)
                             InsertHistory(xPlayer.getIdentifier(), GetPriceItem.Label, GetPriceItem.Price, DisplayDate())
                             SendWebHook('sBoutique', 26551, xPlayer.getName()..' a effectué un achat dans la boutique.\n\nArticle: **'..GetPriceItem.Label..'**\n'..'Prix: **'..GetPriceItem.Price..'**')
-                            TriggerClientEvent('esx:showAdvancedNotification', _source, Config.ShopName, '', 'Merci pour ton achat !\nTu a recu: '..GetPriceItem.Label, "CHAR_BANK_FLEECA", 3)
+                            TriggerClientEvent('sBoutique:BuyMessage', _source, GetPriceItem.Label)
                         elseif GetPriceItem.Type == "money" then
                             xPlayer.addAccountMoney('bank', GetPriceItem.Number)
                             InsertHistory(xPlayer.getIdentifier(), GetPriceItem.Label, GetPriceItem.Price, DisplayDate())
                             SendWebHook('sBoutique', 26551, xPlayer.getName()..' a effectué un achat dans la boutique.\n\nArticle: **'..GetPriceItem.Label..'**\n'..'Prix: **'..GetPriceItem.Price..'**')
-                            TriggerClientEvent('esx:showAdvancedNotification', _source, Config.ShopName, '', 'Merci pour ton achat !\nTu a recu: '..GetPriceItem.Label, "CHAR_BANK_FLEECA", 3)
+                            TriggerClientEvent('sBoutique:BuyMessage', _source, GetPriceItem.Label)
                         end
                     end)
                 else
-                    TriggerClientEvent('esx:showAdvancedNotification', _source, Config.ShopName, '', 'Tu n\'as pas assez de ' .. Config.CoinsName .. ' pour effectuer cette achat !', "CHAR_BANK_FLEECA", 3)
+                    TriggerClientEvent('sBoutique:BuyErrorMessage', _source)
                 end
             end)
         end
@@ -102,6 +112,15 @@ AddEventHandler('sBoutique:GiveVehicule', function(vehicleProps, plate)
     end
 end)
 
+RegisterServerEvent('sBoutique:AddReview')
+AddEventHandler('sBoutique:AddReview', function(data)
+    local _source = source
+    local xPlayer = ESX.GetPlayerFromId(source)
+	if xPlayer ~= nil then
+        InsertReview(xPlayer.getIdentifier(), xPlayer.getName(), data.Review_Text, data.Star, DisplayDate())
+    end
+end)
+
 
 --[[ Check Plate ]]
 ESX.RegisterServerCallback('sBoutique:CheckPlate', function (source, cb, plate)
@@ -113,8 +132,8 @@ ESX.RegisterServerCallback('sBoutique:CheckPlate', function (source, cb, plate)
 end)
 
 
-RegisterServerEvent('sBoutique:GetPackageDetails')
-AddEventHandler('sBoutique:GetPackageDetails', function()
+RegisterServerEvent('sBoutique:GetTebexDetails')
+AddEventHandler('sBoutique:GetTebexDetails', function()
     local _source = source
     local xPlayer = ESX.GetPlayerFromId(source)
     local IsAdmin = CheckAdmin('licence:'..xPlayer.getIdentifier())
@@ -123,11 +142,8 @@ AddEventHandler('sBoutique:GetPackageDetails', function()
 
     if Config.EnableTebexAPI then
         local Data = {}
-        local FetchInformationTebex = GetInformationTebex(function(response)
-            local FetchPackageTebex = GetPackageTebex(function(response2)
-                TriggerClientEvent('sBoutique:GetPackageDetailsClient', _source, response, response2)
-                return
-            end)
+        local FetchInformationTebex = GetPayementTebex(function(response)
+            TriggerClientEvent('sBoutique:GetTebexDetailsClient', _source, response)
         end)
     end
 end)

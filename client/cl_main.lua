@@ -36,6 +36,28 @@ AddEventHandler('sBoutique:GetHistoryClient', function(Data, Logo)
     })
 end)
 
+RegisterNetEvent('sBoutique:GetReviewsClient')
+AddEventHandler('sBoutique:GetReviewsClient', function(Data)
+    SendNUIMessage({
+        Reviews = Data
+    })
+end)
+
+RegisterNetEvent('sBoutique:BuyErrorMessage')
+AddEventHandler('sBoutique:BuyErrorMessage', function(Type)
+    SendAlertErrorBuy()
+end)
+
+RegisterNetEvent('sBoutique:BuyMessage')
+AddEventHandler('sBoutique:BuyMessage', function(Type)
+    SendAlertBuy(Type)
+end)
+
+RegisterNetEvent('sBoutique:ReviewMessage')
+AddEventHandler('sBoutique:ReviewMessage', function()
+    SendAlertReviews()
+end)
+
 RegisterNetEvent('sBoutique:GiveVehicule')
 AddEventHandler('sBoutique:GiveVehicule', function(Model)
     GiveVehicule(Model)
@@ -46,16 +68,14 @@ AddEventHandler('sBoutique:GetAdminDetailsClient', function(Details)
     
 end)
 
-RegisterNetEvent('sBoutique:GetPackageDetailsClient')
-AddEventHandler('sBoutique:GetPackageDetailsClient', function(Info, Package)
+RegisterNetEvent('sBoutique:GetTebexDetailsClient')
+AddEventHandler('sBoutique:GetTebexDetailsClient', function(Info, Package)
     SendNUIMessage({
-        InfoDetails = {
+        InfoPack = {
             ['Data'] = Info,
         },
-        PackageDetails = {
-            ['Data'] = Package,
+        Details = {
             ['Translate'] = {
-                ['Devise'] = Translate('buy_package_signe'),
                 ['Buy'] = Translate('paid_button'),
             }
         }
@@ -63,6 +83,13 @@ AddEventHandler('sBoutique:GetPackageDetailsClient', function(Info, Package)
 end)
 
 
+RegisterNUICallback('GetReviews', function(data)
+    TriggerServerEvent('sBoutique:GetReviews')
+end)
+
+RegisterNUICallback('AddReview', function(data)
+    TriggerServerEvent('sBoutique:AddReview', data)
+end)
 
 RegisterNUICallback('GetPointsAndCode', function(data)
     TriggerServerEvent('sBoutique:GetPointsAndCode')
@@ -70,14 +97,6 @@ end)
 
 RegisterNUICallback('GetHistory', function(data)
     TriggerServerEvent('sBoutique:GetHistory')
-end)
-
-RegisterNUICallback('GetPackageDetails', function(data)
-    TriggerServerEvent('sBoutique:GetPackageDetails')
-end)
-
-RegisterNUICallback('GetAdminDetails', function(data)
-    TriggerServerEvent('sBoutique:GetAdminDetails')
 end)
 
 RegisterNUICallback('TestVehicule', function(data)
@@ -139,6 +158,7 @@ function Display(Open)
                     ['VehiculeSection'] = Config.VehiculeSection,
                     ['WeaponSection'] = Config.WeaponSection,
                     ['MoneySection'] = Config.MoneySection,
+                    ['PackTebex'] = Config.TebexPackage,
                     ['Translate'] = {
                         your_balance = Translate('your_balance'),
                         tebex_message = Translate('tebex_message'),
@@ -159,6 +179,10 @@ function Display(Open)
                         tebex_menu = Translate('tebex_menu'),
                         reviews_menu = Translate('reviews_menu'),
                         admin_menu = Translate('admin_menu'),
+
+                        review_title = Translate('review_title'),
+                        describe_placeholder = Translate('describe_placeholder'),
+                        valid_button = Translate('valid_button'),
 
                         no_data = Translate('no_data'),
                     }

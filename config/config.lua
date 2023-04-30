@@ -43,14 +43,38 @@ Config.TestingVehiculeTimer = 30                                                
 
 
 
+
+--███████╗██╗░░░██╗███╗░░██╗░█████╗░████████╗██╗░█████╗░███╗░░██╗
+--██╔════╝██║░░░██║████╗░██║██╔══██╗╚══██╔══╝██║██╔══██╗████╗░██║
+--█████╗░░██║░░░██║██╔██╗██║██║░░╚═╝░░░██║░░░██║██║░░██║██╔██╗██║
+--██╔══╝░░██║░░░██║██║╚████║██║░░██╗░░░██║░░░██║██║░░██║██║╚████║
+--██║░░░░░╚██████╔╝██║░╚███║╚█████╔╝░░░██║░░░██║╚█████╔╝██║░╚███║
+--╚═╝░░░░░░╚═════╝░╚═╝░░╚══╝░╚════╝░░░░╚═╝░░░╚═╝░╚════╝░╚═╝░░╚══╝
+
+function SendAlertErrorBuy()
+    exports['sCore']:SendAlert('Tu n\'as pas assez de ' .. Config.CoinsName .. ' pour effectuer cette achat !', "Error", 5000)
+    -- ESX.ShowAdvancedNotification(Config.ShopName, '', 'Tu n\'as pas assez de ' .. Config.CoinsName .. ' pour effectuer cette achat !', "CHAR_BANK_FLEECA", 3)
+end
+
+function SendAlertBuy(Type)
+    exports['sCore']:SendAlert('Merci pour votre achat<br>Vous avez obtenu: '..Type, "Success", 5000)
+    -- ESX.ShowAdvancedNotification(Config.ShopName, '', 'Merci pour votre achat\nVous avez obtenu: '..Type, "CHAR_BANK_FLEECA", 3)
+end
+
+function SendAlertReviews()
+    exports['sCore']:SendAlert('Votre avis a bien été posté', "Success", 5000)
+    -- ESX.ShowNotification("Votre avis a bien été poster")
+end
+
+
+
+
 -- ██████╗░██████╗░░█████╗░███╗░░░███╗░█████╗░████████╗██╗░█████╗░███╗░░██╗
 -- ██╔══██╗██╔══██╗██╔══██╗████╗░████║██╔══██╗╚══██╔══╝██║██╔══██╗████╗░██║
 -- ██████╔╝██████╔╝██║░░██║██╔████╔██║██║░░██║░░░██║░░░██║██║░░██║██╔██╗██║
 -- ██╔═══╝░██╔══██╗██║░░██║██║╚██╔╝██║██║░░██║░░░██║░░░██║██║░░██║██║╚████║
 -- ██║░░░░░██║░░██║╚█████╔╝██║░╚═╝░██║╚█████╔╝░░░██║░░░██║╚█████╔╝██║░╚███║
 -- ╚═╝░░░░░╚═╝░░╚═╝░╚════╝░╚═╝░░░░░╚═╝░╚════╝░░░░╚═╝░░░╚═╝░╚════╝░╚═╝░░╚══╝
-
-
 
 Config.PromotionType = "vehicule"                                                   -- Type: vehicule, weapon, item, money, black_money
 Config.PromotionNumber = 1                                                          -- Nombre: Le nombre d'item à donner au joueur
@@ -59,6 +83,7 @@ Config.PromotionLabelName = "Comet S2"                                          
 Config.PromotionImageName = "img/comet.png"                                         -- Nom de l'image, prend en charge (PNG, JPEG, GIF) ⚠️ Dimension ⚠️: 620x290
 Config.PromotionCoinsbBeforeReduction = 2000                                        -- Prix avant réduction
 Config.PromotionCoinsAfterReduction = 1200                                          -- prix apres réduction
+
 
 
 
@@ -101,13 +126,15 @@ Config.PopularSection = {
     }
 }
 
+
+
+
 -- ██╗░░░██╗███████╗██╗░░██╗██╗░█████╗░██╗░░░░░███████╗░██████╗
 -- ██║░░░██║██╔════╝██║░░██║██║██╔══██╗██║░░░░░██╔════╝██╔════╝
 -- ╚██╗░██╔╝█████╗░░███████║██║██║░░╚═╝██║░░░░░█████╗░░╚█████╗░
 -- ░╚████╔╝░██╔══╝░░██╔══██║██║██║░░██╗██║░░░░░██╔══╝░░░╚═══██╗
 -- ░░╚██╔╝░░███████╗██║░░██║██║╚█████╔╝███████╗███████╗██████╔╝
 -- ░░░╚═╝░░░╚══════╝╚═╝░░╚═╝╚═╝░╚════╝░╚══════╝╚══════╝╚═════╝░
-
 
 Config.VehiculeSection = {
     {
@@ -264,6 +291,8 @@ Config.MoneySection = {
 }
 
 
+
+
 --░█████╗░██████╗░███╗░░░███╗██╗███╗░░██╗
 --██╔══██╗██╔══██╗████╗░████║██║████╗░██║
 --███████║██║░░██║██╔████╔██║██║██╔██╗██║
@@ -274,3 +303,10 @@ Config.MoneySection = {
 Config.EnableAdminPanel = true
 Config.AdminPerms = { "licence:75956d95858927d2994fab238d77b5cb43916e21", "licence:id" }
 Config.EnableTebexAPI = true
+
+Config.TebexPackage = {
+    { Title = "Pack Bronze", Image = "https://i.postimg.cc/mrypYmzj/money.gif", Description = "5000 Coins<br>Pas de voiture<br>Role Discord", Price = "4.99€", ButtonName = "Voir", ButtonAction = "https://..." },
+    { Title = "Pack Basic", Image = "https://i.postimg.cc/mrypYmzj/money.gif", Description = "10000 Coins<br>Pas de voiture<br>Role Discord", Price = "8.99€", ButtonName = "Voir", ButtonAction = "https://..." },
+    { Title = "Pack Or", Image = "https://i.postimg.cc/mrypYmzj/money.gif", Description = "15000 Coins<br>Voiture Boutique<br>Role Discord", Price = "12.99€", ButtonName = "Voir", ButtonAction = "https://..." },
+    { Title = "Pack Ultime", Image = "https://i.postimg.cc/mrypYmzj/money.gif", Description = "20000 Coins<br>Voiture Unique<br>Role Discord", Price = "15.99€", ButtonName = "Voir", ButtonAction = "https://..." },
+}

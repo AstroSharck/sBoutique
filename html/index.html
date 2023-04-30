@@ -15,6 +15,11 @@
 
 <body>
     <div class="container">
+        <div id="alert">
+            <span class="closebtn" onclick="closeAlert()">&times;</span>
+            <strong id="message">Alerte !</strong>
+        </div>
+
         <div class="sidebar" style="display: none;">
             <span class="logo"></span>
             <div id="logo-boutique" style="text-align: center;">
@@ -87,7 +92,7 @@
                     <input type="text" placeholder="Search">
                 </div> -->
                 <div class="user-settings">
-                    <button class="button" style="margin-right: 100px;" id="add_reviews">Ajouter un Avis</button>
+                    <button class="button" style="display: none; margin-right: 100px;" id="add_reviews" data-id="add-reviews-area">Ajouter un Avis</button>
                     <!-- <img class="user-img"
                         src="https://cdn.discordapp.com/attachments/1093850988705763398/1098619930510901269/Astro.gif"
                         alt=""> -->
@@ -128,59 +133,61 @@
 
 
                     <div class="small-header anim" style="--delay: .3s">Populaire</div>
-                    <div id="popular-section" class="center-elements-popular">
+                    <div id="popular-section">
                         <center>
-                            <h3 id="no-data">Aucune donnée</h3>
+                            <h3 id="no-data" style="text-align: center; margin-top: 10%;">Aucune donnée</h3>
                         </center>
                     </div>
                 </div>
 
                 <div class="vehicule-area">
-                    <div id="vehicule-section" class="center-elements">
+                    <div id="vehicule-section">
                         <center>
-                            <h3 id="no-data">Aucune donnée</h3>
+                            <h3 id="no-data" style="text-align: center; margin-top: 25%;">Aucune donnée</h3>
                         </center>
                     </div>
                 </div>
 
                 <div class="weapon-area">
-                    <div id="weapon-section" class="center-elements">
+                    <div id="weapon-section">
                         <center>
-                            <h3 id="no-data">Aucune donnée</h3>
+                            <h3 id="no-data" style="text-align: center; margin-top: 25%;">Aucune donnée</h3>
                         </center>
                     </div>
                 </div>
 
                 <div class="money-area">
-                    <div id="money-section" class="center-elements">
+                    <div id="money-section">
                         <center>
-                            <h3 id="no-data">Aucune donnée</h3>
+                            <h3 id="no-data" style="text-align: center; margin-top: 25%;">Aucune donnée</h3>
                         </center>
                     </div>
                 </div>
 
                 <div class="history-area">
-                    <div id="history-section" class="center-elements">
-                        <h3 id="no-data">Aucune donnée</h3>
+                    <div id="history-section">
+                        <h3 id="no-data" style="text-align: center; margin-top: 25%;">Aucune donnée</h3>
                     </div>
                 </div>
 
 
 
                 <div class="tebex-area">
-                    <div id="tebex-section" class="center-elements">
-                        <h3 id="no-data">Aucune donnée</h3>
-                    </div>
+                    <h1 class="anim" style="--delay: .1s; text-align: center; color: white;">Tebex</h1>
+                    <div class="anim" style="--delay: .1s;border-top: 2px solid #242132;"></div>
+                    <div id="tebex-section">
+                        <h3 id="no-data" style="text-align: center; margin-top: 19%;">Aucune donnée</h3>
+                    </div> 
                 </div>
 
                 <div class="reviews-area">
-                    <div id="reviews-section" class="center-elements">
-                        <h3 id="no-data">Aucune donnée</h3>
+                    <div id="reviews-section">
+                        <h3 id="no-data" style="text-align: center; margin-top: 25%;">Aucune donnée</h3>
                     </div>
                 </div>
 
                 <div class="admin-panel-area">
-                    <div id="admin-panel-section" class="video">
+                    <div id="admin-panel-section">
                         <div class="main-blogs">
                             <div class="admin-blog anim" style="--delay: .1s">
                                 <div style="text-align: center; padding-bottom: 10px;"><div class="admin-header">Donner des point par ID</div></div>
@@ -213,11 +220,11 @@
                             </div>
                         </div>
                         <br>
-                        <div class="coins-elements">
+                        <div class="coins-elements anim" style="--delay: .1s">
                             <button class="button">Historique Tebex</button>
                             <button class="button">Historique Boutique</button>
                         </div>
-                        <table class="styled-table">
+                        <table class="styled-table anim" style="--delay: .1s">
                             <thead>
                               <tr>
                                 <th>ID</th>
@@ -230,97 +237,6 @@
                             <tbody>
                               <tr>
                                 <td>1</td>
-                                <td>AstroSharck</td>
-                                <td>Clé de voiture</td>
-                                <td>10</td>
-                                <td>28/04/2023</td>
-                              </tr>
-                              <tr>
-                                <td>1</td>
-                                <td>John Doe</td>
-                                <td>Clé de voiture</td>
-                                <td>10</td>
-                                <td>28/04/2023</td>
-                              </tr>
-                              <tr>
-                                <td>1</td>
-                                <td>John Doe</td>
-                                <td>Clé de voiture</td>
-                                <td>10</td>
-                                <td>28/04/2023</td>
-                              </tr>
-                              <tr>
-                                <td>1</td>
-                                <td>John Doe</td>
-                                <td>Clé de voiture</td>
-                                <td>10</td>
-                                <td>28/04/2023</td>
-                              </tr>
-                              <tr>
-                                <td>1</td>
-                                <td>John Doe</td>
-                                <td>Clé de voiture</td>
-                                <td>10</td>
-                                <td>28/04/2023</td>
-                              </tr>
-                              <tr>
-                                <td>1</td>
-                                <td>John Doe</td>
-                                <td>Clé de voiture</td>
-                                <td>10</td>
-                                <td>28/04/2023</td>
-                              </tr>
-                              <tr>
-                                <td>1</td>
-                                <td>John Doe</td>
-                                <td>Clé de voiture</td>
-                                <td>10</td>
-                                <td>28/04/2023</td>
-                              </tr>
-                              <tr>
-                                <td>1</td>
-                                <td>John Doe</td>
-                                <td>Clé de voiture</td>
-                                <td>10</td>
-                                <td>28/04/2023</td>
-                              </tr>
-                              <tr>
-                                <td>1</td>
-                                <td>John Doe</td>
-                                <td>Clé de voiture</td>
-                                <td>10</td>
-                                <td>28/04/2023</td>
-                              </tr>
-                              <tr>
-                                <td>1</td>
-                                <td>John Doe</td>
-                                <td>Clé de voiture</td>
-                                <td>10</td>
-                                <td>28/04/2023</td>
-                              </tr>
-                              <tr>
-                                <td>1</td>
-                                <td>John Doe</td>
-                                <td>Clé de voiture</td>
-                                <td>10</td>
-                                <td>28/04/2023</td>
-                              </tr>
-                              <tr>
-                                <td>1</td>
-                                <td>John Doe</td>
-                                <td>Clé de voiture</td>
-                                <td>10</td>
-                                <td>28/04/2023</td>
-                              </tr>
-                              <tr>
-                                <td>1</td>
-                                <td>John Doe</td>
-                                <td>Clé de voiture</td>
-                                <td>10</td>
-                                <td>28/04/2023</td>
-                              </tr>
-                              <tr>
-                                <td>1</td>
                                 <td>John Doe</td>
                                 <td>Clé de voiture</td>
                                 <td>10</td>
@@ -328,10 +244,41 @@
                               </tr>
                             </tbody>
                           </table>
-                          
                     </div>
                 </div>
 
+
+                <div class="add-reviews-area">
+                    <div style="display: flex; justify-content: center; align-content: center; margin-top: 10%; ">
+                        <div style="width: 700px; height: 400px; border-radius: 10px; background-color: #242132; display: block; margin: auto;">
+                            <div class="coins-elements">
+                                <h1 id="review_title">Mettre un avis</h1>             
+                            </div>
+                            <div class="coins-elements" style="padding: 0px 70px 10px 70px;">
+                                <textarea id="review_text" name="description" placeholder="Décrivez votre expérience" rows="4"></textarea>
+                                <br>                           
+                            </div>
+                            <br>
+                            <div class="coins-elements">
+                                <div class="rate">
+                                    <input type="radio" id="star5" name="rate" value="5" />
+                                    <label for="star5" title="text"><i class="fa-solid fa-star"></i> </label>
+                                    <input type="radio" id="star4" name="rate" value="4" />
+                                    <label for="star4" title="text"><i class="fa-solid fa-star"></i> </label>
+                                    <input type="radio" id="star3" name="rate" value="3" checked/>
+                                    <label for="star3" title="text"><i class="fa-solid fa-star"></i> </label>
+                                    <input type="radio" id="star2" name="rate" value="2" />
+                                    <label for="star2" title="text"><i class="fa-solid fa-star"></i> </label>
+                                    <input type="radio" id="star1" name="rate" value="1" />
+                                    <label for="star1" title="text"><i class="fa-solid fa-star"></i> </label>
+                                </div>                             
+                            </div>
+                            <div class="coins-elements">
+                                <button id="button_valid" class="button" style="margin-top: 30px; font-size: 25px;" onclick="AddReview(this)">Valider</button>                           
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
 
             </div>
