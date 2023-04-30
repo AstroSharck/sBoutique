@@ -66,14 +66,28 @@ function GetItemPrice(name, type)
 end
 
 function InsertHistory(identifier, item, price, date)
-    MySQL.Async.execute(
-        'INSERT INTO shop_history (identifier, item, price, date) VALUES (@identifier, @item, @price, @date)', {
+    local _source = source
+    MySQL.Async.execute('INSERT INTO shop_history (identifier, item, price, date) VALUES (@identifier, @item, @price, @date)', {
             ['@identifier'] = identifier,
             ['@item'] = item,
             ['@price'] = price,
             ['@date'] = date
-        }, function()
-        end)
+    }, function()
+        
+    end)
+end
+
+function InsertReview(identifier, name, review, star, date)
+    local _source = source
+    MySQL.Async.execute('INSERT INTO shop_reviews (identifier, name, review, star, date) VALUES (@identifier, @name, @review, @star, @date)', {
+        ['@identifier'] = identifier,
+        ['@name'] = name,
+        ['@review'] = review,
+        ['@star'] = star,
+        ['@date'] = date
+    }, function()
+        TriggerClientEvent('sBoutique:ReviewMessage', _source)
+    end)
 end
 
 function SendWebHook(title, color, message)
@@ -126,20 +140,6 @@ end
 function GetPayementTebex(callback)
     local TebexKey = GetConvar("sv_tebexSecret", nil)
     PerformHttpRequest('https://plugin.tebex.io/payments', function(statusCode, responseBody, headers)
-        if statusCode == 200 then
-            local decode = json.decode(responseBody)
-            callback(decode)
-        else
-            callback(nil)
-        end
-    end, 'GET', '', {
-        ['X-Tebex-Secret'] = TebexKey
-    })
-end
-
-function GetPackageTebex(callback)
-    local TebexKey = GetConvar("sv_tebexSecret", nil)
-    PerformHttpRequest('https://plugin.tebex.io/packages', function(statusCode, responseBody, headers)
         if statusCode == 200 then
             local decode = json.decode(responseBody)
             callback(decode)

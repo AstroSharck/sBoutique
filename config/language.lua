@@ -17,10 +17,14 @@ translations = {
         money_menu = "Money",
         history_menu = "History",
 
-        sub_menu_title = "Guide",
+        sub_menu_title = "Other",
         tebex_menu = "Tebex",
         reviews_menu = "Reviews",
         admin_menu = "Admin Panel",
+
+        review_title = "Leave a review",
+        describe_placeholder = "Describe your experience",
+        valid_button = "Validate",
 
         no_data = "No data"
     },
@@ -42,10 +46,14 @@ translations = {
         money_menu = "Argent",
         history_menu = "Historique",
 
-        sub_menu_title = "Guide",
+        sub_menu_title = "Autre",
         tebex_menu = "Tebex",
         reviews_menu = "Avis",
         admin_menu = "Panel Admin",
+
+        review_title = "Laisser un avis",
+        describe_placeholder = "Décrivez votre expérience",
+        valid_button = "Valider",
 
         no_data = "Aucune donnée"
     },
@@ -72,6 +80,10 @@ translations = {
         reviews_menu = "Reseñas",
         admin_menu = "Panel de Administración",
 
+        review_title = "Dejar una reseña",
+        describe_placeholder = "Describa su experiencia",
+        valid_button = "Validar",
+
         no_data = "No hay datos"
     },
     ['de'] = {
@@ -97,6 +109,11 @@ translations = {
         reviews_menu = "Bewertungen",
         admin_menu = "Admin-Bereich",
 
+        
+        review_title = "Bewertung hinterlassen",
+        describe_placeholder = "Beschreiben Sie Ihre Erfahrung",
+        valid_button = "Bestätigen",
+
         no_data = "Keine Daten"
     },
     ['zh'] = {
@@ -121,6 +138,10 @@ translations = {
         tebex_menu = "Tebex",
         reviews_menu = "评论",
         admin_menu = "管理员区域",
+
+        review_title = "留下评论",
+        describe_placeholder = "描述你的体验",
+        valid_button = "确认",
 
         no_data = "无数据"
     }
