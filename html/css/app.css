@@ -1540,6 +1540,11 @@ textarea {
 	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
 }
 
+.active-button {
+	background-color: #053c7000;
+	border: #0170b186 solid 3px;
+}
+
 /* Style du bouton de fermeture */
 .closebtn {
 	margin-left: 15px;

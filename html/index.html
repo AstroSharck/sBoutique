@@ -76,7 +76,7 @@
                         </svg>
                         <text id="reviews-cat">Avis</text>
                     </a>
-                    <a class="sidebar-link" href="#" data-id="admin-panel-area">
+                    <a class="sidebar-link" href="#" data-id="admin-panel-area" style="display: none;">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path fill-rule="evenodd" clip-rule="evenodd"
                                 d="M17.769 8.382H22C22 4.985 19.964 3 16.516 3H7.484C4.036 3 2 4.985 2 8.338v7.324C2 19.015 4.036 21 7.484 21h9.032C19.964 21 22 19.015 22 15.662v-.313h-4.231c-1.964 0-3.556-1.552-3.556-3.466 0-1.915 1.592-3.467 3.556-3.467v-.034zm0 1.49h3.484c.413 0 .747.326.747.728v2.531a.746.746 0 01-.747.728H17.85c-.994.013-1.864-.65-2.089-1.595a1.982 1.982 0 01.433-1.652 2.091 2.091 0 011.576-.74zm.151 2.661h.329a.755.755 0 00.764-.745.755.755 0 00-.764-.746h-.329a.766.766 0 00-.54.213.727.727 0 00-.224.524c0 .413.34.75.764.754zM6.738 8.382h5.644a.755.755 0 00.765-.746.755.755 0 00-.765-.745H6.738a.755.755 0 00-.765.737c0 .413.341.75.765.754z" />
@@ -192,17 +192,17 @@
                             <div class="admin-blog anim" style="--delay: .1s">
                                 <div style="text-align: center; padding-bottom: 10px;"><div class="admin-header">Donner des point par ID</div></div>
                                 <div class="coins-elements" style="display: inline-block;">
-                                    <input class="inputBox" type="text" id="inputBox" name="inputBox" placeholder="Serveur ID">
-                                    <input class="inputBox" type="text" id="inputBox" name="inputBox" placeholder="Points a donner">
+                                    <input class="inputBox" type="text" id="ServerIdInput" name="inputBox" placeholder="Serveur ID">
+                                    <input class="inputBox" type="text" id="AmountIdInput" name="inputBox" placeholder="Points a donner">
                                 </div>
                                 <div class="coins-elements" style="margin-top: 13%;">
-                                    <button class="button">Donner</button>
+                                    <button class="button" id="GiveByIdButton">Donner</button>
                                 </div>
                             </div>
                             <div class="admin-blog anim" style="--delay: .1s; width: 700px;">
                                 <div style="text-align: center; padding-bottom: 10px;"><div class="admin-header">Revenue Total</div></div>
                                 <div class="coins-elements">
-                                    <div class="user-name" style="font-size: 50px;">1052€</div><div style="font-size: 15px; margin-top: 20px;">HT</div>
+                                    <div class="user-name" style="font-size: 50px;" id="Total-Price-Tebex">-€</div><div style="font-size: 15px; margin-top: 20px;">HT</div>
                                 </div>
                                 <div class="coins-elements">
                                     <div class="admin-blog__time">Basé sur les 100 derniers paiements !</div>
@@ -211,20 +211,21 @@
                             <div class="admin-blog anim" style="--delay: .1s">
                                 <div style="text-align: center; padding-bottom: 10px;"><div class="admin-header">Donner des point par Code</div></div>
                                 <div class="coins-elements" style="display: inline-block;">
-                                    <input class="inputBox" type="text" id="inputBox" name="inputBox" placeholder="Code Boutique">
-                                    <input class="inputBox" type="text" id="inputBox" name="inputBox" placeholder="Points a donner">
+                                    <input class="inputBox" type="text" id="ServerCodeInput" name="inputBox" placeholder="Code Boutique">
+                                    <input class="inputBox" type="text" id="AmountCodeInput" name="inputBox" placeholder="Points a donner">
                                 </div>
                                 <div class="coins-elements" style="margin-top: 13%;">
-                                    <button class="button">Donner</button>
+                                    <button class="button" id="GiveByCodeButton">Donner</button>
                                 </div>
                             </div>
                         </div>
                         <br>
                         <div class="coins-elements anim" style="--delay: .1s">
-                            <button class="button">Historique Tebex</button>
-                            <button class="button">Historique Boutique</button>
+                            <button class="button active-button" id="ShopTab" data-id="ingame-history">Historique Boutique</button>
+                            <button class="button" id="TebexTab" data-id="tebex-history">Historique Tebex</button>
                         </div>
-                        <table class="styled-table anim" style="--delay: .1s">
+
+                        <table class="styled-table anim" style="--delay: .1s" id="ingame-history">
                             <thead>
                               <tr>
                                 <th>ID</th>
@@ -234,14 +235,23 @@
                                 <th>Date</th>
                               </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="table-ingame-history">
+                              
+                            </tbody>
+                          </table>
+
+                          <table class="styled-table anim" style="display: none;" id="tebex-history">
+                            <thead>
                               <tr>
-                                <td>1</td>
-                                <td>John Doe</td>
-                                <td>Clé de voiture</td>
-                                <td>10</td>
-                                <td>28/04/2023</td>
+                                <th>Pseudo</th>
+                                <th>Email</th>
+                                <th>Package</th>
+                                <th>Prix</th>
+                                <th>Date</th>
                               </tr>
+                            </thead>
+                            <tbody id="table-tebex-history">
+                              
                             </tbody>
                           </table>
                     </div>
