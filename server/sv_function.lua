@@ -65,10 +65,11 @@ function GetItemPrice(name, type)
     return nil
 end
 
-function InsertHistory(identifier, item, price, date)
+function InsertHistory(identifier, name, item, price, date)
     local _source = source
-    MySQL.Async.execute('INSERT INTO shop_history (identifier, item, price, date) VALUES (@identifier, @item, @price, @date)', {
+    MySQL.Async.execute('INSERT INTO shop_history (identifier, name, item, price, date) VALUES (@identifier, @name, @item, @price, @date)', {
             ['@identifier'] = identifier,
+            ['@name'] = name,
             ['@item'] = item,
             ['@price'] = price,
             ['@date'] = date
@@ -86,7 +87,39 @@ function InsertReview(identifier, name, review, star, date)
         ['@star'] = star,
         ['@date'] = date
     }, function()
-        TriggerClientEvent('sBoutique:ReviewMessage', _source)
+        TriggerClientEvent('sBoutique:SendNotify', _source, "ReviewSuccess")
+    end)
+end
+
+function UpdatePointByID(xPlayer, point)
+    MySQL.Async.fetchAll('SELECT * FROM users WHERE identifier=@identifier', {
+        ['@identifier'] = xPlayer.getIdentifier()
+    }, function(data)
+        local poi = data[1].coins
+        npoint = poi + point
+
+        MySQL.Async.execute('UPDATE `users` SET `coins`=@point  WHERE identifier=@identifier', {
+            ['@identifier'] = xPlayer.getIdentifier(),
+            ['@point'] = npoint 
+        }, function(rowsChange)
+            
+        end)
+    end)
+end
+
+function UpdatePointByCode(Code, Point)
+    MySQL.Async.fetchAll('SELECT * FROM users WHERE boutique_id=@code', {
+        ['@code'] = Code
+    }, function(data)
+        local poi = data[1].coins
+        npoint = poi + Point
+
+        MySQL.Async.execute('UPDATE `users` SET `coins`=@point  WHERE boutique_id=@code', {
+            ['@code'] = Code,
+            ['@point'] = npoint 
+        }, function(rowsChange)
+            
+        end)
     end)
 end
 

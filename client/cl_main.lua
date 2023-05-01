@@ -15,6 +15,14 @@ else
 end
 
 
+RegisterNetEvent('sBoutique:CheckAdminClient')
+AddEventHandler('sBoutique:CheckAdminClient', function(Data)
+    SendNUIMessage({
+        AdminData = Data
+    })
+end)
+
+
 RegisterNetEvent('sBoutique:GetPointsAndCodeClient')
 AddEventHandler('sBoutique:GetPointsAndCodeClient', function(Coins, Code)
     SendNUIMessage({
@@ -43,19 +51,9 @@ AddEventHandler('sBoutique:GetReviewsClient', function(Data)
     })
 end)
 
-RegisterNetEvent('sBoutique:BuyErrorMessage')
-AddEventHandler('sBoutique:BuyErrorMessage', function(Type)
-    SendAlertErrorBuy()
-end)
-
-RegisterNetEvent('sBoutique:BuyMessage')
-AddEventHandler('sBoutique:BuyMessage', function(Type)
-    SendAlertBuy(Type)
-end)
-
-RegisterNetEvent('sBoutique:ReviewMessage')
-AddEventHandler('sBoutique:ReviewMessage', function()
-    SendAlertReviews()
+RegisterNetEvent('sBoutique:SendNotify')
+AddEventHandler('sBoutique:SendNotify', function(Type, Item)
+    SendNotify(Type, Item)
 end)
 
 RegisterNetEvent('sBoutique:GiveVehicule')
@@ -83,6 +81,26 @@ AddEventHandler('sBoutique:GetTebexDetailsClient', function(Info, Package)
 end)
 
 
+
+
+
+
+RegisterNUICallback('CheckAdmin', function(data)
+    TriggerServerEvent('sBoutique:CheckAdmin')
+end)
+
+
+
+RegisterNUICallback('GiveCoinsById', function(data)
+    ExecuteCommand('giveid '..data.id..' '..data.amount)
+end)
+
+RegisterNUICallback('GiveCoinsByCode', function(data)
+    ExecuteCommand('giveidboutique '..data.code..' '..data.amount)
+end)
+
+
+
 RegisterNUICallback('GetReviews', function(data)
     TriggerServerEvent('sBoutique:GetReviews')
 end)
@@ -107,11 +125,11 @@ RegisterNUICallback('TestVehicule', function(data)
 end)
 
 RegisterNUICallback('BuyItem', function(data)
-    Display(false)
     TriggerServerEvent('sBoutique:BuyItem', data)
+    Display(false)
 end)
 
-RegisterNUICallback('exit', function(data)
+RegisterNUICallback('Exit', function(data)
     Display(false)
 end)
 
@@ -160,6 +178,7 @@ function Display(Open)
                     ['MoneySection'] = Config.MoneySection,
                     ['PackTebex'] = Config.TebexPackage,
                     ['Translate'] = {
+                        buy_package_signe = Translate('buy_package_signe'),
                         your_balance = Translate('your_balance'),
                         tebex_message = Translate('tebex_message'),
                         special_offer = Translate('special_offer'),

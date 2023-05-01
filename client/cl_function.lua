@@ -27,7 +27,7 @@ function SpawnCar(car)
     SetEntityAsMissionEntity(vehicle, true, true)
     SetPedIntoVehicle(GetPlayerPed(-1), vehicle, -1)
     SetVehicleDoorsLocked(vehicle, 4)
-    ESX.ShowNotification("Vous avez " .. tostring(Config.TestingVehiculeTimer) .. " secondes pour tester le véhicule.")
+    SendNotify('TestingMessageStart')
     local timer = Config.TestingVehiculeTimer
     local breakable = false
     breakable = false
@@ -35,18 +35,18 @@ function SpawnCar(car)
         Wait(1000)
         timer = timer - 1
         if timer == 15 then
-            ESX.ShowNotification("Il vous reste plus que 15 secondes.")
+            SendNotify('TestingMessageTimer', "15")
         end
         if timer == 10 then
-            ESX.ShowNotification("Il vous reste plus que 10 secondes.")
+            SendNotify('TestingMessageTimer', "10")
         end
         if timer == 5 then
-            ESX.ShowNotification("Il vous reste plus que 5 secondes.")
+            SendNotify('TestingMessageTimer', "5")
         end
         if timer <= 0 then
             local veh, dist4 = ESX.Game.GetClosestVehicle(playerCoords)
             DeleteEntity(vehicle)
-            ESX.ShowNotification("~r~Vous avez terminé la période d'essai.")
+            SendNotify('TestingMessageFinish')
             SetEntityCoords(PlayerPedId(), SavePOS)
             breakable = true
             break

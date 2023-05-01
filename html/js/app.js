@@ -5,27 +5,26 @@ var TranslateData = null
 window.addEventListener('message', async (event) => {
     if (event.data.Open === true) {
         await InitShop(true, event.data.Data)
+        $.post('https://' + directory + '/GetPointsAndCode', JSON.stringify({ data: '' }));
+        $.post('https://' + directory + '/GetHistory', JSON.stringify({ data: '' }));
+        $.post('https://' + directory + '/GetReviews', JSON.stringify({ data: '' }));
+        $.post('https://' + directory + '/CheckAdmin', JSON.stringify({ data: '' }));
     }
     if (event.data.PointsAndCode) {
         $('#Points-Total').text(event.data.PointsAndCode.Coins)
         $('#Code-Shop').html(`${event.data.PointsAndCode.your_code}<br>↓<br>${event.data.PointsAndCode.Code}`)
     }
-    if (event.data.History) {
-        GetHistoryItem(event.data.History, event.data.History.LogoCoins)
-    }
-    if (event.data.PackageDetails) {
-        GetPackage(event.data.InfoPack.Data, event.data.Details.Data)
-    }
-    if (event.data.Reviews) {
-        GetReviews(event.data.Reviews)
-    }
+    if (event.data.History) { GetHistoryItem(event.data.History, event.data.History.LogoCoins) }
+    if (event.data.PackageDetails) { GetPackage(event.data.InfoPack.Data, event.data.Details.Data) }
+    if (event.data.Reviews) { GetReviews(event.data.Reviews) }
+    if (event.data.AdminData) { ShowAdminPanel(event.data.AdminData) }
     if (event.data.Open === false) { InitShop(false); }
 })
 
 /* Close Function */
 document.onkeyup = function (data) {
     if (data.which == 27) {
-        $.post('https://' + directory + '/exit', JSON.stringify({}));
+        $.post('https://' + directory + '/Exit', JSON.stringify({}));
 
         return;
     };
@@ -43,6 +42,18 @@ document.onkeyup = function (data) {
  */
 
 $(function () {
+    $("#TebexTab, #ShopTab").click(function () {
+        var dataId = $(this).attr("data-id");
+        $("#ingame-history, #tebex-history").hide()
+        $("#" + dataId).show()
+        if (this.id === "ShopTab") {
+            $("#ShopTab").addClass("active-button");
+            $("#TebexTab").removeClass("active-button");
+        } else {
+            $("#TebexTab").addClass("active-button");
+            $("#ShopTab").removeClass("active-button");
+        }
+    });
     $(".sidebar-link, #add_reviews").click(function () {
         $(".sidebar-link").removeClass("is-active");
         var dataId = $(this).attr("data-id");
@@ -50,6 +61,30 @@ $(function () {
         $("." + dataId).css("display", "block");
         $(this).addClass("is-active");
     });
+    $("#GiveByIdButton").click(function () {
+       const ServerIdInput = $('#ServerIdInput').val();
+       const AmountIdInput = $('#AmountIdInput').val();
+
+       if (ServerIdInput === "" || AmountIdInput === "") return
+       $.post('https://' + directory + '/GiveCoinsById', JSON.stringify({
+            id: ServerIdInput,
+            amount: AmountIdInput,
+        }));
+        $('#ServerIdInput').val("");
+        $('#AmountIdInput').val("");
+    });
+    $("#GiveByCodeButton").click(function () {
+        const ServerCodeInput = $('#ServerCodeInput').val();
+        const AmountCodeInput = $('#AmountCodeInput').val();
+ 
+        if (ServerCodeInput === "" || AmountCodeInput === "") return
+        $.post('https://' + directory + '/GiveCoinsByCode', JSON.stringify({
+             code: ServerCodeInput,
+             amount: AmountCodeInput,
+         }));
+         $('#ServerCodeInput').val("");
+         $('#AmountCodeInput').val("");
+     });
 });
 
 $(window).resize(function () {
@@ -73,14 +108,11 @@ $(window).resize(function () {
 function InitShop(Open, DataInfo) {
     if (Open) {
         $('.container').show();
-        $.post('https://' + directory + '/GetPointsAndCode', JSON.stringify({}));
-        $.post('https://' + directory + '/GetHistory', JSON.stringify({}));
-        $.post('https://' + directory + '/GetReviews', JSON.stringify({}));
         if (DataInfo) {
+            TranslateData = DataInfo.Translate
+
             $('#Playername').text(DataInfo.Playername)
-
             $('#add_reviews').text(DataInfo.Translate.add_reniew)
-
             $('.main-header').text(DataInfo.Translate.your_balance)
             $('.main-blog__title').text(DataInfo.Translate.special_offer)
             $('.main-blog__time').text(DataInfo.Translate.tebex_message)
@@ -101,8 +133,6 @@ function InitShop(Open, DataInfo) {
             $('#review_title').text(DataInfo.Translate.review_title)
             $('#review_text').attr('placeholder', DataInfo.Translate.describe_placeholder)
             $('#button_valid').text(DataInfo.Translate.valid_button)
-
-            TranslateData = DataInfo.Translate
 
             $('.logo-expand').text(DataInfo.ShopInfo.ShopName)
             $("#logo-boutique").html(`<img style="width: 100px;" src="${DataInfo.ShopInfo.ImageName}" alt="Logo">`)
@@ -298,10 +328,10 @@ async function AddReview(Button) {
 
 
 function GetHistoryItem(HistoryData, LogoCoins) {
-    $("#history-section").html('')
-    $("#history-section").removeClass('center-elements')
-    $("#history-section").addClass('videos')
     if (HistoryData.Data.length > 0) {
+        $("#history-section").html('')
+        $("#history-section").removeClass('center-elements')
+        $("#history-section").addClass('videos')
         $('#add_reviews').css('display', 'block')
         HistoryData.Data.reverse().forEach(element => {
             $("#history-section").append(`<div class="video anim" style="--delay: .2s">
@@ -359,97 +389,70 @@ function GetPackage(Data) {
 }
 
 function GetReviews(Data) {
-    $("#reviews-section").html('')
-    Data.reverse().forEach(element => {
-        $("#reviews-section").append(`<div class="video anim" style="--delay: .2s; margin-top: 20px;">
-        <div class="video-wrapper" style="display: inline-flex;">
-            <svg width="40px" height="40px" style="margin-top: 5px;" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M752.1 198.4H491.3v31.4c0 14.9-12.1 27-27 27h-27.5c-14.9 0-27-12.1-27-27v-31.4H387v31.4c0 14.9-12.1 27-27 27h-27.5c-14.9 0-27-12.1-27-27v-31.4h-33.7c-8.3 0-15 6.7-15 15V869c0 8.3 6.7 15 15 15h224l271.3-271.3V213.4c0-8.2-6.7-15-15-15z m-117 158.3c-23.2 0-42.1-18.8-42.1-42.1s18.8-42.1 42.1-42.1 42.1 18.8 42.1 42.1-18.9 42.1-42.1 42.1zM615.6 884l151.5-151.5v-77.3L538.3 884zM735.4 884l31.7-31.7V775l-109 109z" fill="#FFBC00"></path><path d="M752.1 168.4H491.3V137c0-14.9-12.1-27-27-27h-27.5c-14.9 0-27 12.1-27 27v31.4H387V137c0-14.9-12.1-27-27-27h-27.5c-14.9 0-27 12.1-27 27v31.4h-33.7c-24.8 0-45 20.2-45 45V869c0 24.8 20.2 45 45 45H752c24.8 0 45-20.2 45-45V213.4c0.1-24.8-20.1-45-44.9-45zM461.3 140v86.9h-21.5V140h21.5zM357 140v86.9h-21.5V140H357z m410.1 712.3L735.4 884h-77.3l109-109v77.3z m0-119.8L615.6 884h-77.3l228.8-228.8v77.3z m0-119.7L495.9 884h-224c-8.3 0-15-6.7-15-15V213.4c0-8.3 6.7-15 15-15h33.7v31.4c0 14.9 12.1 27 27 27H360c14.9 0 27-12.1 27-27v-31.4h22.8v31.4c0 14.9 12.1 27 27 27h27.5c14.9 0 27-12.1 27-27v-31.4h260.8c8.3 0 15 6.7 15 15v399.4z" fill="#46287C"></path><path d="M335.6 140h21.5v86.9h-21.5zM439.8 140h21.5v86.9h-21.5z" fill="#FFBC00"></path><path d="M635.1 314.6m-42.1 0a42.1 42.1 0 1 0 84.2 0 42.1 42.1 0 1 0-84.2 0Z" fill="#FFFFFF"></path></g></svg>
-                <h3 style="color: white;font-weight: bold; margin-left: 10px;">${element.name}</h3>
-        </div>
-        <span class="closebtn" style="margin-right: 10px; margin-top: 10px;" onclick="DelReview(${element.id})">&times;</span>
-        <br>
-        <br>
-        <center>
-            <div class="coins-elements">
-                <div class="user-name">${element.review}</div>
-            </div>
-            <br>
-            <div class="coins-elements">
-                <div class="rating">
-                    ${element.star === 5 ? '<input type="radio" value="5" checked/>':'<input type="radio" value="5"/>'}
-                    <label for="star5" title="text"><i class="fa-solid fa-star"></i> </label>
-                    ${element.star === 4 ? '<input type="radio"  value="4" checked/>':'<input type="radio" value="4"/>'}
-                    <label for="star4" title="text"><i class="fa-solid fa-star"></i> </label>
-                    ${element.star === 3 ? '<input type="radio" value="3" checked/>':'<input type="radio" value="3" />'}
-                    <label for="star3" title="text"><i class="fa-solid fa-star"></i> </label>
-                    ${element.star === 2 ? '<input type="radio" value="2" checked/>':'<input type="radio" value="2" />'}
-                    <label for="star2" title="text"><i class="fa-solid fa-star"></i> </label>
-                    ${element.star === 1 ? '<input type="radio" value="1" checked/>':'<input type="radio" value="1" />'}
-                    <label for="star1" title="text"><i class="fa-solid fa-star"></i> </label>
-                </div>                             
-            </div>
-            <div class="price-elements">
-                <div  class="user-name">${element.date}</div>
-            </div>
-        </center>
-    </div>`);
-    })
-}
-
-
-/* function ShowAdminPanel() {
-    $("#admin-panel-section").html('')
-    $("#admin-panel-section").removeClass('center-elements')
-    $("#admin-panel-section").addClass('videos')
-    $("#admin-panel-section").append(`<div class="video anim" style="--delay: .1s">
+    if (Data.length > 0) {
+        $("#reviews-section").html('')
+        Data.reverse().forEach(element => {
+            $("#reviews-section").append(`<div class="video anim" style="--delay: .2s; margin-top: 20px;">
             <div class="video-wrapper" style="display: inline-flex;">
                 <svg width="40px" height="40px" style="margin-top: 5px;" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M752.1 198.4H491.3v31.4c0 14.9-12.1 27-27 27h-27.5c-14.9 0-27-12.1-27-27v-31.4H387v31.4c0 14.9-12.1 27-27 27h-27.5c-14.9 0-27-12.1-27-27v-31.4h-33.7c-8.3 0-15 6.7-15 15V869c0 8.3 6.7 15 15 15h224l271.3-271.3V213.4c0-8.2-6.7-15-15-15z m-117 158.3c-23.2 0-42.1-18.8-42.1-42.1s18.8-42.1 42.1-42.1 42.1 18.8 42.1 42.1-18.9 42.1-42.1 42.1zM615.6 884l151.5-151.5v-77.3L538.3 884zM735.4 884l31.7-31.7V775l-109 109z" fill="#FFBC00"></path><path d="M752.1 168.4H491.3V137c0-14.9-12.1-27-27-27h-27.5c-14.9 0-27 12.1-27 27v31.4H387V137c0-14.9-12.1-27-27-27h-27.5c-14.9 0-27 12.1-27 27v31.4h-33.7c-24.8 0-45 20.2-45 45V869c0 24.8 20.2 45 45 45H752c24.8 0 45-20.2 45-45V213.4c0.1-24.8-20.1-45-44.9-45zM461.3 140v86.9h-21.5V140h21.5zM357 140v86.9h-21.5V140H357z m410.1 712.3L735.4 884h-77.3l109-109v77.3z m0-119.8L615.6 884h-77.3l228.8-228.8v77.3z m0-119.7L495.9 884h-224c-8.3 0-15-6.7-15-15V213.4c0-8.3 6.7-15 15-15h33.7v31.4c0 14.9 12.1 27 27 27H360c14.9 0 27-12.1 27-27v-31.4h22.8v31.4c0 14.9 12.1 27 27 27h27.5c14.9 0 27-12.1 27-27v-31.4h260.8c8.3 0 15 6.7 15 15v399.4z" fill="#46287C"></path><path d="M335.6 140h21.5v86.9h-21.5zM439.8 140h21.5v86.9h-21.5z" fill="#FFBC00"></path><path d="M635.1 314.6m-42.1 0a42.1 42.1 0 1 0 84.2 0 42.1 42.1 0 1 0-84.2 0Z" fill="#FFFFFF"></path></g></svg>
                     <h3 style="color: white;font-weight: bold; margin-left: 10px;">${element.name}</h3>
             </div>
-            <div class="video-wrapper">
-                <img src="${element.image}" />
-            </div>
+            <span class="closebtn" style="margin-right: 10px; margin-top: 10px;" onclick="DelReview(${element.id})">&times;</span>
+            <br>
             <br>
             <center>
                 <div class="coins-elements">
-                    <div class="user-name">${element.price}${Translate.Devise}</div>
+                    <div class="user-name">${element.review}</div>
                 </div>
                 <br>
+                <div class="coins-elements">
+                    <div class="rating">
+                        ${element.star === 5 ? '<input type="radio" value="5" checked/>' : '<input type="radio" value="5"/>'}
+                        <label for="star5" title="text"><i class="fa-solid fa-star"></i> </label>
+                        ${element.star === 4 ? '<input type="radio"  value="4" checked/>' : '<input type="radio" value="4"/>'}
+                        <label for="star4" title="text"><i class="fa-solid fa-star"></i> </label>
+                        ${element.star === 3 ? '<input type="radio" value="3" checked/>' : '<input type="radio" value="3" />'}
+                        <label for="star3" title="text"><i class="fa-solid fa-star"></i> </label>
+                        ${element.star === 2 ? '<input type="radio" value="2" checked/>' : '<input type="radio" value="2" />'}
+                        <label for="star2" title="text"><i class="fa-solid fa-star"></i> </label>
+                        ${element.star === 1 ? '<input type="radio" value="1" checked/>' : '<input type="radio" value="1" />'}
+                        <label for="star1" title="text"><i class="fa-solid fa-star"></i> </label>
+                    </div>                             
+                </div>
                 <div class="price-elements">
-                <button class="button" onclick="window.invokeNative('openUrl', '${InfoShop.account.domain}/${element.category.name.toLowerCase()}/${element.id}')">${Translate.Buy}</button>
+                    <div  class="user-name">${element.date}</div>
                 </div>
             </center>
-            </div>`);
-} */
-
-
-
-
-
-/* Alert System */
-function ShowAlert(Text, Type, Timed) {
-    // Afficher le type de l'alerte
-    if (Type === "Error") {
-        $("#alert").css('background-color', 'red')
-    }
-    if (Type === "Success") {
-        $("#alert").css('background-color', 'green')
-    }
-    if (Type === "Warning") {
-        $("#alert").css('background-color', 'orange')
-    }
-
-    // Afficher l'alerte
-    $("#alert").fadeIn(1000)
-    document.getElementById("message").textContent = Text
-    // Cacher l'alerte après 3 secondes (3000 millisecondes)
-    if (Timed) {
-        setTimeout(function () {
-            $("#alert").fadeOut(500)
-        }, Timed);
+        </div>`);
+        })
     }
 }
 
-function closeAlert() {
-    $("#alert").fadeOut(500)
+
+function ShowAdminPanel(Data) {
+    $('a[data-id="admin-panel-area"]').css('display', 'flex')
+    $('#Total-Price-Tebex').text(`${Data.TotalAmount}${TranslateData.buy_package_signe}`)
+    $("#table-ingame-history").empty();
+    Data.TrasactionInGame.reverse().forEach(element => {
+        $("#table-ingame-history").append(`<tr>
+        <td>${element.id}</td>
+        <td>${element.name}</td>
+        <td>${element.item}</td>
+        <td>${element.price}</td>
+        <td>${element.date}</td>
+       </tr>`);
+    });
+    console.log(Data)
+    $("#table-tebex-history").empty();
+    Data.TransactionsTebex.forEach(element => {
+        if (element.packages.length > 0) {
+            $("#table-tebex-history").append(`<tr>
+            <td>${element.player.name}</td>
+            <td>${element.email}</td>
+            <td>${element.packages[0].name}</td>
+            <td>${element.amount}${TranslateData.buy_package_signe}</td>
+            <td>${element.date}</td>
+           </tr>`);
+        }
+    })
 }

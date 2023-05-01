@@ -11,7 +11,6 @@ Config.EsxNews = true                                                           
 Config.Language = 'fr'                                                              -- Prend en charge (fr, en, es, de, zh) mais vous pouvez ajouter votre langue
 Config.OpenKey = "F1"                                                               -- Touche pour ouvrir la boutique
 Config.WebhookDiscord = "https://discord.com/api/webhooks/1101033663417823303/Dkl-D7keunR7hSjehb9PXpfATCcNupoiMyzR9pmrmTqLUC56ImkQNx6pKQCcfD3p0Dfm"
-Config.MessageDropCheater = "La triche, c'est mal ;)"                               -- Message d'expultion pour les tricheurs !
 
 --##################################################################################################################################
 
@@ -51,19 +50,44 @@ Config.TestingVehiculeTimer = 30                                                
 --██║░░░░░╚██████╔╝██║░╚███║╚█████╔╝░░░██║░░░██║╚█████╔╝██║░╚███║
 --╚═╝░░░░░░╚═════╝░╚═╝░░╚══╝░╚════╝░░░░╚═╝░░░╚═╝░╚════╝░╚═╝░░╚══╝
 
-function SendAlertErrorBuy()
-    exports['sCore']:SendAlert('Tu n\'as pas assez de ' .. Config.CoinsName .. ' pour effectuer cette achat !', "Error", 5000)
-    -- ESX.ShowAdvancedNotification(Config.ShopName, '', 'Tu n\'as pas assez de ' .. Config.CoinsName .. ' pour effectuer cette achat !', "CHAR_BANK_FLEECA", 3)
+function CheatDetect(xPlayer, Message)
+    print(xPlayer.getName()..": "..Message)
+    --[[ DropPlayer(source, 'La triche, c\'est mal ;)') ]]
+    -- Vous pouvez aussi ajouter un export pour bannir la personne !
 end
 
-function SendAlertBuy(Type)
-    exports['sCore']:SendAlert('Merci pour votre achat<br>Vous avez obtenu: '..Type, "Success", 5000)
-    -- ESX.ShowAdvancedNotification(Config.ShopName, '', 'Merci pour votre achat\nVous avez obtenu: '..Type, "CHAR_BANK_FLEECA", 3)
-end
-
-function SendAlertReviews()
-    exports['sCore']:SendAlert('Votre avis a bien été posté', "Success", 5000)
-    -- ESX.ShowNotification("Votre avis a bien été poster")
+function SendNotify(Type, Args)
+    if Type == "BuySuccess" then
+        exports['sCore']:SendAlert('Merci pour votre achat<br>Vous avez obtenu: '..Args, "Success", 5000)
+        -- exports['okokNotify']:Alert(Config.ShopName, 'Merci pour votre achat<br>Vous avez obtenu: '..Args, 5000, 'success')
+        -- ESX.ShowAdvancedNotification(Config.ShopName, '', 'Merci pour votre achat\nVous avez obtenu: '..Args, "CHAR_BANK_FLEECA", 3)
+    elseif Type == "BuyError" then
+        exports['sCore']:SendAlert('Tu n\'as pas assez de ' .. Config.CoinsName .. ' pour effectuer cette achat !', "Error", 5000)
+        -- exports['okokNotify']:Alert(Config.ShopName, 'Tu n\'as pas assez de ' .. Config.CoinsName .. ' pour effectuer cette achat !', 5000, 'error')
+        -- ESX.ShowAdvancedNotification(Config.ShopName, '', 'Tu n\'as pas assez de ' .. Config.CoinsName .. ' pour effectuer cette achat !', "CHAR_BANK_FLEECA", 3)
+    elseif Type == "ReviewSuccess" then
+        exports['sCore']:SendAlert('Votre avis a bien été posté', "Success", 5000)
+        -- exports['okokNotify']:Alert(Config.ShopName, 'Votre avis a bien été posté', 5000, 'success')
+        -- ESX.ShowAdvancedNotification(Config.ShopName, '', 'Votre avis a bien été posté', "CHAR_BANK_FLEECA", 3)
+    elseif Type == "TestingMessageStart" then
+        exports['sCore']:SendAlert("Vous avez " .. tostring(Config.TestingVehiculeTimer) .. " secondes pour tester le véhicule.", "Warning", 3000)
+        -- exports['okokNotify']:Alert(Config.ShopName, "Vous avez " .. tostring(Config.TestingVehiculeTimer) .. " secondes pour tester le véhicule.", 3000, 'warning')
+        -- ESX.ShowAdvancedNotification(Config.ShopName, '', "Vous avez " .. tostring(Config.TestingVehiculeTimer) .. " secondes pour tester le véhicule.", "CHAR_BANK_FLEECA", 3)
+    elseif Type == "TestingMessageTimer" then
+        exports['sCore']:SendAlert('Il vous reste plus que '..Args..' secondes.', "Warning", 3000)
+        -- exports['okokNotify']:Alert(Config.ShopName, 'Il vous reste plus que '..Args..' secondes.', 3000, 'warning')
+        -- ESX.ShowAdvancedNotification(Config.ShopName, '', 'Il vous reste plus que '..Args..' secondes.', "CHAR_BANK_FLEECA", 3)
+    elseif Type == "TestingMessageFinish" then
+        exports['sCore']:SendAlert('Vous avez terminé la période d\'essai.', "Error", 5000)
+        -- exports['okokNotify']:Alert(Config.ShopName, 'Vous avez terminé la période d\'essai.', 5000, 'error')
+        -- ESX.ShowAdvancedNotification(Config.ShopName, '', 'Vous avez terminé la période d\'essai.', "CHAR_BANK_FLEECA", 3)
+    elseif Type == "SendCoinsMessage" then
+        exports['sCore']:SendAlert('Vous avez envoyer '..Args.Coins..' à '..tostring(Args.Name), "Success", 5000)
+        --[[ ESX.ShowAdvancedNotification(Config.ShopName, '', 'Vous avez terminé la période d\'essai.', "CHAR_BANK_FLEECA", 3) ]]
+    elseif Type == "ReceiveCoinsMessage" then
+        exports['sCore']:SendAlert('Vous avez reçu '..Args.Coins..' '..Config.CoinsName..' à dépenser dans la boutique', "Success", 5000)
+        --[[ ESX.ShowAdvancedNotification(Config.ShopName, '', 'Vous avez reçu '..Args.Coins..' '..Config.CoinsName..' à dépenser dans la boutique', "CHAR_BANK_FLEECA", 3) ]]
+    end
 end
 
 
@@ -229,29 +253,29 @@ Config.WeaponSection = {
     {
         Type = "weapon",                                                            -- Type: vehicule, weapon, item, money, black_money
         Number = 1,                                                                 -- Number: Le nombre d'item à donner au joueur
-        Name = "adder",                                                             -- Nom de spawn
-        LabelName = "Adder",                                                        -- Nom a afficher dans le menu
+        Name = "weapon_knife",                                                      -- Nom de spawn
+        LabelName = "Couteau",                                                      -- Nom a afficher dans le menu
         ImageName = "img/adder.jpg",                                                -- Nom de l'image, prend en charge (PNG, JPEG, GIF) ⚠️ Dimension ⚠️: 300x169
         Point = 7000                                                                -- Prix d'achat en coins
     },{
         Type = "weapon",
         Number = 1, 
-        Name = "carbonizzare",
-        LabelName = "Carbonizzare",
+        Name = "weapon_switchblade",
+        LabelName = "Cran d'arret",
         ImageName = "img/carbonizzare.jpg",
         Point = 10000
     },{
         Type = "weapon",
-        Number = 1, 
-        Name = "comet2",
-        LabelName = "Comet S2",
+        Number = 200, 
+        Name = "weapon_ceramicpistol",
+        LabelName = "Pistolet Céramique",
         ImageName = "img/comet2.jpg",
         Point = 15000
     },{
         Type = "weapon",
-        Number = 1, 
-        Name = "comet6",
-        LabelName = "Comet S6",
+        Number = 200, 
+        Name = "weapon_tacticalrifle",
+        LabelName = "Fusil M4",
         ImageName = "img/comet6.jpg",
         Point = 15000
     }

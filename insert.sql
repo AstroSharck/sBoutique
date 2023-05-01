@@ -4,6 +4,7 @@ ALTER TABLE `users` ADD  `boutique_id` int(11) NOT NULL;
 CREATE TABLE `shop_history` (
   `id` int(11) NOT NULL,
   `identifier` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
   `item` varchar(255) NOT NULL,
   `price` varchar(255) NOT NULL,
   `date` varchar(255) NOT NULL
