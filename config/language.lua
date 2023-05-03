@@ -55,7 +55,21 @@ translations = {
         describe_placeholder = "Décrivez votre expérience",
         valid_button = "Valider",
 
-        no_data = "Aucune donnée"
+        no_data = "Aucune donnée",
+        no_player_id = "Aucun joueur possède cette id",
+        no_player_code = "Aucun joueur possède ce code boutique",
+        no_permissions = "Vous n'avez pas la permission de faire sa !",
+
+        buy_success = "Merci pour votre achat<br>Vous avez obtenu: %s",
+        buy_failure = "Tu n'as pas assez de %s pour effectuer cette achat !",
+        review_post = "Votre avis a bien été posté !",
+        review_delete = "L'avis a bien été supprimé !",
+        test_message_start = "Vous avez %s secondes pour tester le véhicule.",
+        test_message_timer = "Il vous reste plus que %s secondes.",
+        test_message_end = "Vous avez terminé la période d\'essai.",
+        give_id_coins_message = "Vous avez envoyer %s %s à %s",
+        give_code_coins_message = "Vous avez envoyer %s %s au code boutique %s",
+        receive_coins_message = "Vous avez reçu %s %s à dépenser dans la boutique",
     },
     ['es'] = {
         buy_package_signe = "€",

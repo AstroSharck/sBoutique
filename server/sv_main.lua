@@ -42,7 +42,8 @@ AddEventHandler("sBoutique:GetReviews", function()
     local _source = source
     local xPlayer = ESX.GetPlayerFromId(source)
     MySQL.Async.fetchAll('SELECT * FROM shop_reviews', {}, function(data)
-        TriggerClientEvent('sBoutique:GetReviewsClient', _source, data)
+        local IsAdmin = CheckAdmin(xPlayer.getIdentifier())
+        TriggerClientEvent('sBoutique:GetReviewsClient', _source, data, IsAdmin)
     end)
 end)
 
@@ -72,26 +73,26 @@ AddEventHandler("sBoutique:BuyItem", function(data)
                             TriggerClientEvent('sBoutique:GiveVehicule', _source, GetPriceItem.Name)
                             InsertHistory(xPlayer.getIdentifier(), xPlayer.getName(), GetPriceItem.Label, GetPriceItem.Price, DisplayDate())
                             SendWebHook('sBoutique', 26551, xPlayer.getName()..' a effectué un achat dans la boutique.\n\nArticle: **'..GetPriceItem.Label..'**\n'..'Prix: **'..GetPriceItem.Price..'**')
-                            TriggerClientEvent('sBoutique:SendNotify', _source, "BuySuccess", GetPriceItem.Label)
+                            TriggerClientEvent('sBoutique:SendNotify', _source, "Success", string.format(Translate('buy_success'), GetPriceItem.Label))
                         elseif GetPriceItem.Type == "weapon" then
                             xPlayer.addWeapon(GetPriceItem.Name, GetPriceItem.Number)
                             InsertHistory(xPlayer.getIdentifier(), xPlayer.getName(), GetPriceItem.Label, GetPriceItem.Price, DisplayDate())
                             SendWebHook('sBoutique', 26551, xPlayer.getName()..' a effectué un achat dans la boutique.\n\nArticle: **'..GetPriceItem.Label..'**\n'..'Prix: **'..GetPriceItem.Price..'**')
-                            TriggerClientEvent('sBoutique:SendNotify', _source, "BuySuccess", GetPriceItem.Label)
+                            TriggerClientEvent('sBoutique:SendNotify', _source, "Success", string.format(Translate('buy_success'), GetPriceItem.Label))
                         elseif GetPriceItem.Type == "item" then
                             xPlayer.addInventoryItem(GetPriceItem.Name, GetPriceItem.Number)
                             InsertHistory(xPlayer.getIdentifier(), xPlayer.getName(), GetPriceItem.Label, GetPriceItem.Price, DisplayDate())
                             SendWebHook('sBoutique', 26551, xPlayer.getName()..' a effectué un achat dans la boutique.\n\nArticle: **'..GetPriceItem.Label..'**\n'..'Prix: **'..GetPriceItem.Price..'**')
-                            TriggerClientEvent('sBoutique:SendNotify', _source, "BuySuccess", GetPriceItem.Label)
+                            TriggerClientEvent('sBoutique:SendNotify', _source, "Success", string.format(Translate('buy_success'), GetPriceItem.Label))
                         elseif GetPriceItem.Type == "money" then
                             xPlayer.addAccountMoney('bank', GetPriceItem.Number)
                             InsertHistory(xPlayer.getIdentifier(), xPlayer.getName(), GetPriceItem.Label, GetPriceItem.Price, DisplayDate())
                             SendWebHook('sBoutique', 26551, xPlayer.getName()..' a effectué un achat dans la boutique.\n\nArticle: **'..GetPriceItem.Label..'**\n'..'Prix: **'..GetPriceItem.Price..'**')
-                            TriggerClientEvent('sBoutique:SendNotify', _source, "BuySuccess", GetPriceItem.Label)
+                            TriggerClientEvent('sBoutique:SendNotify', _source, "Success", string.format(Translate('buy_success'), GetPriceItem.Label))
                         end
                     end)
                 else
-                    TriggerClientEvent('sBoutique:SendNotify', _source, "BuyError", GetPriceItem.Label)
+                    TriggerClientEvent('sBoutique:SendNotify', _source, "Error", string.format(Translate('buy_failure'), Config.CoinsName))
                 end
             end)
         end
@@ -108,7 +109,6 @@ AddEventHandler('sBoutique:GiveVehicule', function(vehicleProps, plate)
             ['@plate']   = vehicleProps.plate,
             ['@vehicle'] = json.encode(vehicleProps)
         }, function(rowsChange)
-            TriggerClientEvent('esx:showAdvancedNotification', _source, Config.ShopName, '', 'Merci pour ton achat !\nTu a bien recu ton véhicule !', "CHAR_BANK_FLEECA", 3)
         end)
     end
 end)
@@ -119,6 +119,19 @@ AddEventHandler('sBoutique:AddReview', function(data)
     local xPlayer = ESX.GetPlayerFromId(source)
 	if xPlayer ~= nil then
         InsertReview(xPlayer.getIdentifier(), xPlayer.getName(), data.Review_Text, data.Star, DisplayDate())
+    end
+end)
+
+RegisterServerEvent('sBoutique:DelReview')
+AddEventHandler('sBoutique:DelReview', function(data)
+    local _source = source
+    local xPlayer = ESX.GetPlayerFromId(source)
+	if xPlayer ~= nil then
+        MySQL.Async.execute('DELETE FROM shop_reviews WHERE id = @id', {
+            ['@id'] = data.Id
+        }, function(data1)
+            TriggerClientEvent('sBoutique:SendNotify', _source, "Success", Translate('review_delete'))
+        end)
     end
 end)
 
@@ -137,7 +150,7 @@ RegisterServerEvent('sBoutique:GetTebexDetails')
 AddEventHandler('sBoutique:GetTebexDetails', function()
     local _source = source
     local xPlayer = ESX.GetPlayerFromId(source)
-    local IsAdmin = CheckAdmin('licence:'..xPlayer.getIdentifier())
+    local IsAdmin = CheckAdmin(xPlayer.getIdentifier())
 
     if not Config.EnableAdminPanel then return end
 
@@ -154,7 +167,7 @@ RegisterServerEvent('sBoutique:CheckAdmin')
 AddEventHandler('sBoutique:CheckAdmin', function()
     local _source = source
     local xPlayer = ESX.GetPlayerFromId(source)
-    local IsAdmin = CheckAdmin('licence:'..xPlayer.getIdentifier())
+    local IsAdmin = CheckAdmin(xPlayer.getIdentifier())
     if not IsAdmin then return end
     if not Config.EnableAdminPanel then return end
 
@@ -177,21 +190,25 @@ RegisterCommand("giveid", function(source, args, raw)
     local _source = source
     local id = args[1]
     local point = args[2]
-    local xPlayer = ESX.GetPlayerFromId(id)
 
+    if not CheckPlayerId(id) then 
+        if source == 0 then return print(Translate('no_player_id')) end
+        return TriggerClientEvent('sBoutique:SendNotify', _source, "Error", Translate('no_player_id'))
+    end
+
+    local xPlayer = ESX.GetPlayerFromId(id)
     if source == 0 then 
         UpdatePointByID(xPlayer, point)
-        print('Vous avez envoyer '..point..' '..Config.CoinsName..' à '..xPlayer.getName())
+        print(string.format(Translate('give_id_coins_message'), point, Config.CoinsName, xPlayer.getName()))
+        TriggerClientEvent('sBoutique:SendNotify', id, "Success", string.format(Translate('receive_coins_message'), point, Config.CoinsName))
     else
-        local IsAdmin = CheckAdmin('licence:'..xPlayer.getIdentifier())
-        if not IsAdmin then return print('You don\'t have permissions') end
+        local IsAdmin = CheckAdmin(xPlayer.getIdentifier())
+        if not IsAdmin then return TriggerClientEvent('sBoutique:SendNotify', _source, "Error", Translate('no_permissions')) end
         UpdatePointByID(xPlayer, point)
-        local Args1 = { ['Coins'] = point, ['Name'] = xPlayer.getName() }
-        TriggerClientEvent('sBoutique:SendNotify', _source, "SendCoinsMessage", Args1)
-        TriggerClientEvent('sBoutique:SendNotify', id, "ReceiveCoinsMessage", Args1)
+        TriggerClientEvent('sBoutique:SendNotify', _source, "Success", string.format(Translate('give_id_coins_message'), point, Config.CoinsName, xPlayer.getName()))
+        TriggerClientEvent('sBoutique:SendNotify', id, "Success", string.format(Translate('receive_coins_message'), point, Config.CoinsName))
     end
 end, false)
-
 
 RegisterCommand("giveidboutique", function(source, args, raw)
     local _source = source
@@ -199,14 +216,11 @@ RegisterCommand("giveidboutique", function(source, args, raw)
     local point = args[2]
     local xPlayer = ESX.GetPlayerFromId(source)
 
-    if source == 0 then 
-        print('Vous avez envoyer '..point..' '..Config.CoinsName..' au code boutique '..code)
-        UpdatePointByCode(code, point)
+    if source == 0 then
+        UpdatePointByCode(code, point, source)
     else
-        local IsAdmin = CheckAdmin('licence:'..xPlayer.getIdentifier())
-        if not IsAdmin then return print('You don\'t have permissions') end
-        UpdatePointByCode(code, point)
-        local Args1 = { ['Coins'] = point, ['Name'] = code }
-        TriggerClientEvent('sBoutique:SendNotify', _source, "SendCoinsMessage", Args1)
+        local IsAdmin = CheckAdmin(xPlayer.getIdentifier())
+        if not IsAdmin then return TriggerClientEvent('sBoutique:SendNotify', _source, "Error", Translate('no_permissions')) end
+        UpdatePointByCode(code, point, source)
     end
 end, false)

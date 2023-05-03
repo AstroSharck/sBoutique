@@ -45,9 +45,10 @@ AddEventHandler('sBoutique:GetHistoryClient', function(Data, Logo)
 end)
 
 RegisterNetEvent('sBoutique:GetReviewsClient')
-AddEventHandler('sBoutique:GetReviewsClient', function(Data)
+AddEventHandler('sBoutique:GetReviewsClient', function(Data, IsAdmin)
     SendNUIMessage({
-        Reviews = Data
+        Reviews = Data,
+        IsAdmin = IsAdmin
     })
 end)
 
@@ -59,11 +60,6 @@ end)
 RegisterNetEvent('sBoutique:GiveVehicule')
 AddEventHandler('sBoutique:GiveVehicule', function(Model)
     GiveVehicule(Model)
-end)
-
-RegisterNetEvent('sBoutique:GetAdminDetailsClient')
-AddEventHandler('sBoutique:GetAdminDetailsClient', function(Details)
-    
 end)
 
 RegisterNetEvent('sBoutique:GetTebexDetailsClient')
@@ -89,8 +85,6 @@ RegisterNUICallback('CheckAdmin', function(data)
     TriggerServerEvent('sBoutique:CheckAdmin')
 end)
 
-
-
 RegisterNUICallback('GiveCoinsById', function(data)
     ExecuteCommand('giveid '..data.id..' '..data.amount)
 end)
@@ -99,14 +93,18 @@ RegisterNUICallback('GiveCoinsByCode', function(data)
     ExecuteCommand('giveidboutique '..data.code..' '..data.amount)
 end)
 
-
-
 RegisterNUICallback('GetReviews', function(data)
     TriggerServerEvent('sBoutique:GetReviews')
 end)
 
 RegisterNUICallback('AddReview', function(data)
     TriggerServerEvent('sBoutique:AddReview', data)
+    Display(false)
+end)
+
+RegisterNUICallback('DelReview', function(data)
+    TriggerServerEvent('sBoutique:DelReview', data)
+    Display(false)
 end)
 
 RegisterNUICallback('GetPointsAndCode', function(data)

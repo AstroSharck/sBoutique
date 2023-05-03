@@ -27,7 +27,7 @@ function SpawnCar(car)
     SetEntityAsMissionEntity(vehicle, true, true)
     SetPedIntoVehicle(GetPlayerPed(-1), vehicle, -1)
     SetVehicleDoorsLocked(vehicle, 4)
-    SendNotify('TestingMessageStart')
+    SendNotify('Success', string.format(Translate('test_message_start'), tostring(Config.TestingVehiculeTimer)))
     local timer = Config.TestingVehiculeTimer
     local breakable = false
     breakable = false
@@ -35,18 +35,18 @@ function SpawnCar(car)
         Wait(1000)
         timer = timer - 1
         if timer == 15 then
-            SendNotify('TestingMessageTimer', "15")
+            SendNotify('Success', string.format(Translate('test_message_timer'), "15"), 3000)
         end
         if timer == 10 then
-            SendNotify('TestingMessageTimer', "10")
+            SendNotify('Success', string.format(Translate('test_message_timer'), "10"), 3000)
         end
         if timer == 5 then
-            SendNotify('TestingMessageTimer', "5")
+            SendNotify('Success', string.format(Translate('test_message_timer'), "5"), 3000)
         end
         if timer <= 0 then
             local veh, dist4 = ESX.Game.GetClosestVehicle(playerCoords)
             DeleteEntity(vehicle)
-            SendNotify('TestingMessageFinish')
+            SendNotify('Success', string.format(Translate('test_message_end'), "5"), 3000)
             SetEntityCoords(PlayerPedId(), SavePOS)
             breakable = true
             break
