@@ -16,7 +16,7 @@ window.addEventListener('message', async (event) => {
     }
     if (event.data.History) { GetHistoryItem(event.data.History, event.data.History.LogoCoins) }
     if (event.data.PackageDetails) { GetPackage(event.data.InfoPack.Data, event.data.Details.Data) }
-    if (event.data.Reviews) { GetReviews(event.data.Reviews) }
+    if (event.data.Reviews) { GetReviews(event.data.Reviews, event.data.IsAdmin) }
     if (event.data.AdminData) { ShowAdminPanel(event.data.AdminData) }
     if (event.data.Open === false) { InitShop(false); }
 })
@@ -62,11 +62,11 @@ $(function () {
         $(this).addClass("is-active");
     });
     $("#GiveByIdButton").click(function () {
-       const ServerIdInput = $('#ServerIdInput').val();
-       const AmountIdInput = $('#AmountIdInput').val();
+        const ServerIdInput = $('#ServerIdInput').val();
+        const AmountIdInput = $('#AmountIdInput').val();
 
-       if (ServerIdInput === "" || AmountIdInput === "") return
-       $.post('https://' + directory + '/GiveCoinsById', JSON.stringify({
+        if (ServerIdInput === "" || AmountIdInput === "") return
+        $.post('https://' + directory + '/GiveCoinsById', JSON.stringify({
             id: ServerIdInput,
             amount: AmountIdInput,
         }));
@@ -76,15 +76,15 @@ $(function () {
     $("#GiveByCodeButton").click(function () {
         const ServerCodeInput = $('#ServerCodeInput').val();
         const AmountCodeInput = $('#AmountCodeInput').val();
- 
+
         if (ServerCodeInput === "" || AmountCodeInput === "") return
         $.post('https://' + directory + '/GiveCoinsByCode', JSON.stringify({
-             code: ServerCodeInput,
-             amount: AmountCodeInput,
-         }));
-         $('#ServerCodeInput').val("");
-         $('#AmountCodeInput').val("");
-     });
+            code: ServerCodeInput,
+            amount: AmountCodeInput,
+        }));
+        $('#ServerCodeInput').val("");
+        $('#AmountCodeInput').val("");
+    });
 });
 
 $(window).resize(function () {
@@ -327,6 +327,13 @@ async function AddReview(Button) {
 }
 
 
+async function DelReview(Id) {
+    $.post('https://' + directory + '/DelReview', JSON.stringify({
+        Id: Id
+    }));
+}
+
+
 function GetHistoryItem(HistoryData, LogoCoins) {
     if (HistoryData.Data.length > 0) {
         $("#history-section").html('')
@@ -388,7 +395,8 @@ function GetPackage(Data) {
     })
 }
 
-function GetReviews(Data) {
+function GetReviews(Data, IsAdmin) {
+    $("#reviews-section").html('<h3 id="no-data" style="text-align: center; margin-top: 25%;">Aucune donnée</h3>')
     if (Data.length > 0) {
         $("#reviews-section").html('')
         Data.reverse().forEach(element => {
@@ -397,7 +405,7 @@ function GetReviews(Data) {
                 <svg width="40px" height="40px" style="margin-top: 5px;" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M752.1 198.4H491.3v31.4c0 14.9-12.1 27-27 27h-27.5c-14.9 0-27-12.1-27-27v-31.4H387v31.4c0 14.9-12.1 27-27 27h-27.5c-14.9 0-27-12.1-27-27v-31.4h-33.7c-8.3 0-15 6.7-15 15V869c0 8.3 6.7 15 15 15h224l271.3-271.3V213.4c0-8.2-6.7-15-15-15z m-117 158.3c-23.2 0-42.1-18.8-42.1-42.1s18.8-42.1 42.1-42.1 42.1 18.8 42.1 42.1-18.9 42.1-42.1 42.1zM615.6 884l151.5-151.5v-77.3L538.3 884zM735.4 884l31.7-31.7V775l-109 109z" fill="#FFBC00"></path><path d="M752.1 168.4H491.3V137c0-14.9-12.1-27-27-27h-27.5c-14.9 0-27 12.1-27 27v31.4H387V137c0-14.9-12.1-27-27-27h-27.5c-14.9 0-27 12.1-27 27v31.4h-33.7c-24.8 0-45 20.2-45 45V869c0 24.8 20.2 45 45 45H752c24.8 0 45-20.2 45-45V213.4c0.1-24.8-20.1-45-44.9-45zM461.3 140v86.9h-21.5V140h21.5zM357 140v86.9h-21.5V140H357z m410.1 712.3L735.4 884h-77.3l109-109v77.3z m0-119.8L615.6 884h-77.3l228.8-228.8v77.3z m0-119.7L495.9 884h-224c-8.3 0-15-6.7-15-15V213.4c0-8.3 6.7-15 15-15h33.7v31.4c0 14.9 12.1 27 27 27H360c14.9 0 27-12.1 27-27v-31.4h22.8v31.4c0 14.9 12.1 27 27 27h27.5c14.9 0 27-12.1 27-27v-31.4h260.8c8.3 0 15 6.7 15 15v399.4z" fill="#46287C"></path><path d="M335.6 140h21.5v86.9h-21.5zM439.8 140h21.5v86.9h-21.5z" fill="#FFBC00"></path><path d="M635.1 314.6m-42.1 0a42.1 42.1 0 1 0 84.2 0 42.1 42.1 0 1 0-84.2 0Z" fill="#FFFFFF"></path></g></svg>
                     <h3 style="color: white;font-weight: bold; margin-left: 10px;">${element.name}</h3>
             </div>
-            <span class="closebtn" style="margin-right: 10px; margin-top: 10px;" onclick="DelReview(${element.id})">&times;</span>
+            ${IsAdmin ? '<span class="closebtn" style="margin-right: 10px; margin-top: 10px;" onclick="DelReview(\'' + element.id + '\')">&times;</span>' : ''}
             <br>
             <br>
             <center>
@@ -442,7 +450,6 @@ function ShowAdminPanel(Data) {
         <td>${element.date}</td>
        </tr>`);
     });
-    console.log(Data)
     $("#table-tebex-history").empty();
     Data.TransactionsTebex.forEach(element => {
         if (element.packages.length > 0) {

@@ -22,6 +22,7 @@ files {
 shared_scripts {
     "config/*.lua"
 }
+
 client_scripts {
     'client/*.lua'
 }
@@ -33,6 +34,5 @@ server_scripts {
 
 dependencies {
     'sCore',
-    '/server:5181',                 -- ⚠️LISEZ S'IL VOUS PLAÎT⚠️ Cela nécessite au moins un artifacts 5181 ou plus
-    '/assetpacks'
+    '/server:5181'                 -- ⚠️LISEZ S'IL VOUS PLAÎT⚠️ Cela nécessite au moins un artifacts 5181 ou plus
 }

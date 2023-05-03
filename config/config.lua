@@ -7,6 +7,8 @@ Config = {}
 -- ██████╦╝╚█████╔╝╚██████╔╝░░░██║░░░██║░╚═██╔═╝░╚██████╔╝███████╗
 -- ╚═════╝░░╚════╝░░╚═════╝░░░░╚═╝░░░╚═╝░░░╚═╝░░░░╚═════╝░╚══════╝
 
+-- Faire la trad panel admin
+
 Config.EsxNews = true                                                               -- Si vous utiliser les dernieres version ESX, veuillez mettre true
 Config.Language = 'fr'                                                              -- Prend en charge (fr, en, es, de, zh) mais vous pouvez ajouter votre langue
 Config.OpenKey = "F1"                                                               -- Touche pour ouvrir la boutique
@@ -56,37 +58,21 @@ function CheatDetect(xPlayer, Message)
     -- Vous pouvez aussi ajouter un export pour bannir la personne !
 end
 
-function SendNotify(Type, Args)
-    if Type == "BuySuccess" then
-        exports['sCore']:SendAlert('Merci pour votre achat<br>Vous avez obtenu: '..Args, "Success", 5000)
-        -- exports['okokNotify']:Alert(Config.ShopName, 'Merci pour votre achat<br>Vous avez obtenu: '..Args, 5000, 'success')
-        -- ESX.ShowAdvancedNotification(Config.ShopName, '', 'Merci pour votre achat\nVous avez obtenu: '..Args, "CHAR_BANK_FLEECA", 3)
-    elseif Type == "BuyError" then
-        exports['sCore']:SendAlert('Tu n\'as pas assez de ' .. Config.CoinsName .. ' pour effectuer cette achat !', "Error", 5000)
-        -- exports['okokNotify']:Alert(Config.ShopName, 'Tu n\'as pas assez de ' .. Config.CoinsName .. ' pour effectuer cette achat !', 5000, 'error')
-        -- ESX.ShowAdvancedNotification(Config.ShopName, '', 'Tu n\'as pas assez de ' .. Config.CoinsName .. ' pour effectuer cette achat !', "CHAR_BANK_FLEECA", 3)
-    elseif Type == "ReviewSuccess" then
-        exports['sCore']:SendAlert('Votre avis a bien été posté', "Success", 5000)
-        -- exports['okokNotify']:Alert(Config.ShopName, 'Votre avis a bien été posté', 5000, 'success')
-        -- ESX.ShowAdvancedNotification(Config.ShopName, '', 'Votre avis a bien été posté', "CHAR_BANK_FLEECA", 3)
-    elseif Type == "TestingMessageStart" then
-        exports['sCore']:SendAlert("Vous avez " .. tostring(Config.TestingVehiculeTimer) .. " secondes pour tester le véhicule.", "Warning", 3000)
-        -- exports['okokNotify']:Alert(Config.ShopName, "Vous avez " .. tostring(Config.TestingVehiculeTimer) .. " secondes pour tester le véhicule.", 3000, 'warning')
-        -- ESX.ShowAdvancedNotification(Config.ShopName, '', "Vous avez " .. tostring(Config.TestingVehiculeTimer) .. " secondes pour tester le véhicule.", "CHAR_BANK_FLEECA", 3)
-    elseif Type == "TestingMessageTimer" then
-        exports['sCore']:SendAlert('Il vous reste plus que '..Args..' secondes.', "Warning", 3000)
-        -- exports['okokNotify']:Alert(Config.ShopName, 'Il vous reste plus que '..Args..' secondes.', 3000, 'warning')
-        -- ESX.ShowAdvancedNotification(Config.ShopName, '', 'Il vous reste plus que '..Args..' secondes.', "CHAR_BANK_FLEECA", 3)
-    elseif Type == "TestingMessageFinish" then
-        exports['sCore']:SendAlert('Vous avez terminé la période d\'essai.', "Error", 5000)
-        -- exports['okokNotify']:Alert(Config.ShopName, 'Vous avez terminé la période d\'essai.', 5000, 'error')
-        -- ESX.ShowAdvancedNotification(Config.ShopName, '', 'Vous avez terminé la période d\'essai.', "CHAR_BANK_FLEECA", 3)
-    elseif Type == "SendCoinsMessage" then
-        exports['sCore']:SendAlert('Vous avez envoyer '..Args.Coins..' à '..tostring(Args.Name), "Success", 5000)
-        --[[ ESX.ShowAdvancedNotification(Config.ShopName, '', 'Vous avez terminé la période d\'essai.', "CHAR_BANK_FLEECA", 3) ]]
-    elseif Type == "ReceiveCoinsMessage" then
-        exports['sCore']:SendAlert('Vous avez reçu '..Args.Coins..' '..Config.CoinsName..' à dépenser dans la boutique', "Success", 5000)
-        --[[ ESX.ShowAdvancedNotification(Config.ShopName, '', 'Vous avez reçu '..Args.Coins..' '..Config.CoinsName..' à dépenser dans la boutique', "CHAR_BANK_FLEECA", 3) ]]
+function SendNotify(Type, Message, Timer)
+    if Type == "Success" then
+        exports['sCore']:SendAlert(Message, "Success", Timer and Timer or '5000')
+        -- exports['okokNotify']:Alert(Config.ShopName, Message, 5000, 'success')
+        -- ESX.ShowAdvancedNotification(Config.ShopName, '', Message, "CHAR_BANK_FLEECA", 3)
+    elseif Type == "Warning" then
+        exports['sCore']:SendAlert(Message, "Warning", Timer and Timer or '5000')
+        -- exports['okokNotify']:Alert(Config.ShopName, Message, 5000, 'warning')
+        -- ESX.ShowAdvancedNotification(Config.ShopName, '', Message, "CHAR_BANK_FLEECA", 3)
+    elseif Type == "Error" then
+        exports['sCore']:SendAlert(Message, "Error", Timer and Timer or '5000')
+        -- exports['okokNotify']:Alert(Config.ShopName, Message, 5000, 'error')
+        -- ESX.ShowAdvancedNotification(Config.ShopName, '', Message, "CHAR_BANK_FLEECA", 3)
+    else
+        exports['sCore']:SendAlert(Message, "Error", Timer and Timer or '5000')
     end
 end
 
@@ -325,8 +311,8 @@ Config.MoneySection = {
 --╚═╝░░╚═╝╚═════╝░╚═╝░░░░░╚═╝╚═╝╚═╝░░╚══╝
 
 Config.EnableAdminPanel = true
-Config.AdminPerms = { "licence:75956d95858927d2994fab238d77b5cb43916e21", "licence:id" }
-Config.EnableTebexAPI = true
+Config.AdminPerms = { "license:bb994fdc0714e531dcd8ae5ca484d02d1a1c73b7", "license:75956d95858927d2994fab238d77b5cb43916e21" }
+Config.EnableTebexAPI = false  -- A faire
 
 Config.TebexPackage = {
     { Title = "Pack Bronze", Image = "https://i.postimg.cc/mrypYmzj/money.gif", Description = "5000 Coins<br>Pas de voiture<br>Role Discord", Price = "4.99€", ButtonName = "Voir", ButtonAction = "https://..." },
